@@ -2,7 +2,7 @@
 #include "stdlib.h"
 
 #define BSIZE_HEIGHT		4
-#define BSIZE_WIDTH		8
+#define BSIZE_WIDTH		8		
 #define MV_UP			{-1,0}
 #define MV_DOWN			{1,0}
 #define MV_LEFT			{0,-1}
@@ -34,9 +34,10 @@ void printTheBoard(int[BSIZE_HEIGHT][BSIZE_WIDTH]);
 Index getAnIndexPositionOf(int, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
 void printIndexPosition(Index);
 void moveRespectingRules(Index, Index*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
-void generateRandomPossibleMove(Index*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
+Index generateRandomPossibleMove(Index*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
 int czyMozliwy(Index, Index*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
-
+void twoPlayersPlay(Index*, Index*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
+void onePlayerPlay(Index*, Index*, *int[BSIZE_HEIGHT][BSIZE_WIDTH]);
 
 int main(){
 	
@@ -63,44 +64,8 @@ int main(){
 	//printIndexPosition(marioIndex);
 	//printIndexPosition(ghostIndex);
 	//printTheBoard(board);
-
-	generateRandomPossibleMove(&marioIndex, board);
-
-	char c;
-	Index move;
-	int zmianaFigury = 0;
-	while(c!='q'){
-		printf("Wprowadz ruch dla %s\n", (zmianaFigury%2 == 0) ? "Mario" : "Duszka");
-		scanf("%c", &c);
-		switch(c){
-			case ASC_UP:
-				move = (Index) MV_UP;
-				break;
-
-			case ASC_DOWN:
-				move = (Index) MV_DOWN;
-				break;
-			case ASC_LEFT:
-				move = (Index) MV_LEFT;
-				break;
-
-			case ASC_RIGHT:
-				move = (Index) MV_RIGHT;
-				break;
-		}
-		if(zmianaFigury++%2 == 0){
-			printf("Ruch Mario: \n");
-			moveRespectingRules(move, &marioIndex, board);
-		} else{
-			printf("Ruch Duszka: \n");
-			moveRespectingRules(move, &ghostIndex, board);
-		}
-		printTheBoard(board);
-		scanf("%c", &c);
-		printf("Nacisnieto: %c", c);
 	
-	}
-
+	onePlayerPlay(&marioIndex, &ghostIndex, board);
 }
 
 /*
@@ -187,7 +152,7 @@ void moveRespectingRules(Index positionChangeRequest, Index *currentPositionOfFi
 
 }
 
-void generateRandomPossibleMove(Index *currentPositionOfFigure,int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
+Index generateRandomPossibleMove(Index *currentPositionOfFigure,int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
 	// lista
 	struct lista{
 		Index position;
@@ -204,25 +169,30 @@ void generateRandomPossibleMove(Index *currentPositionOfFigure,int board[BSIZE_H
 	for(int i=0; i<4; i++){
 		// na tym przykladzie musisz zrozumiec jak dziala zakres zmiennych
 		// i odwolanie przez referencje! 
-		struct lista temp;
-		temp = malloc(sizeof(struct lista));
-		temp.position = array[i];
-		l =  NULL;
+		struct lista *temp = malloc(sizeof(struct lista));
+		temp->position = array[i];
+		temp->l =  NULL;
 		
 		if(czyMozliwy(array[i], currentPositionOfFigure, board)){
-			*ptr_element->l = temp;
+			ptr_element->l = temp;
 			++ileMozliwych;
-			*ptr_element = *ptr_element->l;
-			printf("Znalazlem mozliwosc x=%d y=%d\n", temp.position.x, temp.position.y);
+			ptr_element = temp;
+			printf("Znalazlem mozliwosc x=%d y=%d\n", temp->position.x, temp->position.y);
 		}
 	}	
 	
+	int los = rand() % ileMozliwych;
+	++los;
+
 	ptr_element = &head;
-	while(ptr_element!=NULL){
-		printf("W drzewie mam wartosc x=%d y=%d\n", ptr_element->position.x, ptr_element->position.y);
+	while(los>0){
+		
 		ptr_element = ptr_element->l;
+		--los;
+		//free(temp); <-- nie mam pojecia jak wyczyscic po sobie
 	}
 
+	return ptr_element->position;
 
 }	
 
@@ -237,5 +207,82 @@ int czyMozliwy(Index positionChangeRequest, Index *currentPositionOfFigure, int 
 		return 1;
 	}else{
 		return 0;
+	}		
+}
+
+void twoPlayersPlay(Index *marioIndex, Index *ghostIndex, int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
+
+	char c;
+	Index move;
+	int zmianaFigury = 0;
+	while(c!='q'){
+		printf("Wprowadz ruch dla %s\n", (zmianaFigury%2 == 0) ? "Mario" : "Duszka");
+		scanf("%c", &c);
+		switch(c){
+			case ASC_UP:
+				move = (Index) MV_UP;
+				break;
+
+			case ASC_DOWN:
+				move = (Index) MV_DOWN;
+				break;
+			case ASC_LEFT:
+				move = (Index) MV_LEFT;
+				break;
+
+			case ASC_RIGHT:
+				move = (Index) MV_RIGHT;
+				break;
+		}
+		if(zmianaFigury++%2 == 0){
+			printf("Ruch Mario: \n");
+			moveRespectingRules(move, marioIndex, board);
+		} else{
+			printf("Ruch Duszka: \n");
+			moveRespectingRules(move, ghostIndex, board);
+		}
+		
+		printTheBoard(board);
+		scanf("%c", &c);
+		printf("Nacisnieto: %c", c);
+	
+	}
+}
+
+void onePlayerPlay(Index *marioIndex, Index *ghostIndex, int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
+		
+	char c;
+	Index move;
+	int zmianaFigury = 0;
+
+	while(c!='q'){
+		if(zmianaFigury%2 == 0){
+			printf("Wprowadz ruch dla Mario:\n");
+			scanf("%c", &c);
+			fflush(stdin);
+			zmianaFigury++;
+			switch(c){
+				case ASC_UP:
+					move = (Index) MV_UP;
+					break;
+
+				case ASC_DOWN:
+					move = (Index) MV_DOWN;
+					break;
+				case ASC_LEFT:
+					move = (Index) MV_LEFT;
+					break;
+
+				case ASC_RIGHT:
+					move = (Index) MV_RIGHT;
+					break;
+			}
+			moveRespectingRules(move, marioIndex, board);
+		}else{
+			zmianaFigury++;
+			move = generateRandomPossibleMove(ghostIndex, board);
+			moveRespectingRules(move, ghostIndex, board);
+		}
+	printTheBoard(board);
 	}		
 }
