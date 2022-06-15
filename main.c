@@ -37,7 +37,7 @@ void moveRespectingRules(Index, Index*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
 Index generateRandomPossibleMove(Index*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
 int czyMozliwy(Index, Index*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
 void twoPlayersPlay(Index*, Index*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
-void onePlayerPlay(Index*, Index*, *int[BSIZE_HEIGHT][BSIZE_WIDTH]);
+void onePlayerPlay(Index*, Index*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
 
 int main(){
 	
@@ -179,6 +179,7 @@ Index generateRandomPossibleMove(Index *currentPositionOfFigure,int board[BSIZE_
 			ptr_element = temp;
 			printf("Znalazlem mozliwosc x=%d y=%d\n", temp->position.x, temp->position.y);
 		}
+		free(temp); // dlaczego to dziala? trzeba po prostu lepiej znaznajomic sie z tym co robi malloc i free. 
 	}	
 	
 	int los = rand() % ileMozliwych;
