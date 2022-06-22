@@ -1,7 +1,15 @@
+/*
+Build with: 
+clang main.c logic.c -L/opt/homebrew/lib -lSDL2 -L/opt/homebrew/Cellar/sdl2_ttf/HEAD-b35c03d_1/lib -lSDL2_ttf -I/opt/homebrew/include/SDL2 -D_THREAD_SAFE -L/opt/homebrew/Cellar/sdl2_image/2.0.5/lib -lSDL2_image 
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include "logic.h"
+#include <SDL.h>
+#include <SDL_image.h>
+#include <stdbool.h>
+#include <math.h>
 
 #define ASC_UP			'i'
 #define ASC_DOWN		'k'
@@ -21,21 +29,113 @@ void printIndexPosition(index_t);
 void twoPlayersPlay(index_t*, index_t*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
 void onePlayerPlay(index_t*, index_t*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
 
+typedef struct game{
+	int board[BSIZE_HEIGHT][BSIZE_WIDTH];
+	index_t marioIndex;
+	index_t	ghostIndex;
+} t_game;
+
+
 int main(){
 	
-	int board[BSIZE_HEIGHT][BSIZE_WIDTH] = {
+	t_game myGame ={{
 	{ -1 ,  1 ,  10, -1 , 1 , 1 , 1 , 1 }, 
 	{  1 , -1 ,  1 , -1 , 1 , -1,-1 , 1 }, 
 	{  4 ,  1 ,  1 ,  1 ,-1 , 1 , 1 , 1 },
 	{  0 , -1 , -1 , -1 , 1 , -1, -1, 1 }
-	};
+	},{0,0},{0,0}}; 
+	myGame.marioIndex = getAnIndexPositionOf(10,myGame.board);
+	myGame.ghostIndex = getAnIndexPositionOf(4,myGame.board);
+	
 
-	index_t marioIndex = getAnIndexPositionOf(10,board);
-	index_t ghostIndex = getAnIndexPositionOf(4,board);
-	printIndexPosition(marioIndex);
-	printIndexPosition(ghostIndex);
-	printTheBoard(board);
-	onePlayerPlay(&marioIndex, &ghostIndex, board);
+	
+    // Create a window data type
+    // This pointer will point to the 
+    // window that is allocated from SDL_CreateWindow
+    SDL_Window* window=NULL;
+
+    // Initialize the video subsystem.
+    // iF it returns less than 1, then an
+    // error code will be received.
+    if(SDL_Init(SDL_INIT_VIDEO) < 0){
+	printf("SDL could not be initialized\n");
+	SDL_GetError();
+    }else{
+	printf("SDL video system is ready to go\n");
+    }
+    // Request a window to be created for our platform
+    // The parameters are for the title, x and y position,
+    // and the width and height of the window.
+    window = SDL_CreateWindow("C++ SDL2 Window",20, 20, 640,480,SDL_WINDOW_SHOWN);
+
+    SDL_Renderer* renderer = NULL;
+    renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED);
+
+    // Setup and initialize the SDL2_Image library
+    // with our supported formats
+    int flags = IMG_INIT_PNG;
+    int initStatus = IMG_Init(flags);
+    if((initStatus & flags) != flags){
+	printf("SDL2_Image format not available\n");
+    }
+
+    SDL_Surface* image;
+    image = IMG_Load("./images/mario.png");
+    if(!image){
+	printf("Image not loaded...");
+    }
+
+    SDL_Texture* ourPNG = SDL_CreateTextureFromSurface(renderer, image);
+
+    // Infinite loop for our application
+    bool gameIsRunning = true;
+    // Main application loop
+    while(gameIsRunning){
+	SDL_Event event;
+
+	// (1) Handle Input
+	// Start our event loop
+	while(SDL_PollEvent(&event)){
+	    // Handle each specific event
+	    if(event.type == SDL_QUIT){
+		gameIsRunning= false;
+	    }
+
+	}
+	// (2) Handle Updates
+	
+	// (3) Clear and Draw the Screen
+	// Gives us a clear "canvas"
+	SDL_SetRenderDrawColor(renderer,0,0,0xFF,SDL_ALPHA_OPAQUE);
+	SDL_RenderClear(renderer);
+
+	SDL_RenderCopy(renderer,ourPNG,NULL,NULL);
+
+	// Finally show what we've drawn
+	SDL_RenderPresent(renderer);
+    }
+
+    // We destroy our window. We are passing in the pointer
+    // that points to the memory allocated by the 
+    // 'SDL_CreateWindow' function. Remember, this is
+    // a 'C-style' API, we don't have destructors.
+    SDL_DestroyWindow(window);
+    
+    // Free our png image surface
+    SDL_FreeSurface(image);
+    // And destroy our texture
+    SDL_DestroyTexture(ourPNG);
+
+    IMG_Quit();
+
+    // Quit our program.
+    SDL_Quit();
+
+
+	printIndexPosition(myGame.marioIndex);
+	printIndexPosition(myGame.ghostIndex);
+	printTheBoard(myGame.board);
+	onePlayerPlay(&myGame.marioIndex, &myGame.ghostIndex, myGame.board);
 }
  
 void printTheBoard(int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
