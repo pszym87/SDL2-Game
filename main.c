@@ -36,10 +36,33 @@ typedef struct game{
 int main(){
 	
 	t_game myGame ={{
-	{ -1 ,  1 ,  10, -1 , 1 , 1 , 1 , 1 }, 
-	{  1 , -1 ,  1 , -1 , 1 , -1,-1 , 1 }, 
-	{  4 ,  1 ,  1 ,  1 ,-1 , 1 , 1 , 1 },
-	{  0 , -1 , -1 , -1 , 1 , -1, -1, 1 }
+	{ -1 ,  1 , 10 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1,  1,  1, 1, 1,  1, 1, 1, -1},
+	{ -4 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 ,  1 ,  1 , 1 ,  1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1,  1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1}
 	},{0,0},{0,0}}; 
 	myGame.marioIndex = getAnIndexPositionOf(10,myGame.board);
 	myGame.ghostIndex = getAnIndexPositionOf(4,myGame.board);
@@ -63,7 +86,7 @@ int main(){
     // Request a window to be created for our platform
     // The parameters are for the title, x and y position,
     // and the width and height of the window.
-    window = SDL_CreateWindow("C SDL2 Window",20, 20, 640,480,SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("C SDL2 Window",20, 20, 640,640,SDL_WINDOW_SHOWN);
 
     SDL_Renderer* renderer = NULL;
     renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED);
@@ -77,51 +100,85 @@ int main(){
     }
 
     SDL_Surface* image;
-    SDL_Surface *img_mario;
+    SDL_Surface *img_mario, *img_ghost;
     image = IMG_Load("./images/brick.png");
     img_mario = IMG_Load("./images/mario.png");
+    img_ghost = IMG_Load("./images/ghost.png");
     if(!image){
 	printf("Image not loaded...");
     }
 
     SDL_Texture* ourPNG = SDL_CreateTextureFromSurface(renderer, image);
-    SDL_Texture *marioPNG = SDL_CreateTextureFromSurface(renderer, img_mario);
+    SDL_Texture *marioPNG = SDL_CreateTextureFromSurface(renderer, img_mario); 
+    SDL_Texture *ghostPNG = SDL_CreateTextureFromSurface(renderer, img_ghost);
 
-    SDL_Rect rectangle;
+    SDL_Rect rectangle, ghostRect;
     rectangle.x = myGame.marioIndex.x*GFX_BRICK_SIZE;
     rectangle.y = myGame.marioIndex.y*GFX_BRICK_SIZE;
     rectangle.w = 30;
     rectangle.h = 30;
 
+    ghostRect.x = myGame.ghostIndex.x*GFX_BRICK_SIZE;
+    ghostRect.y = myGame.ghostIndex.y*GFX_BRICK_SIZE;
+    ghostRect.w = 30;
+    ghostRect.h = 30;
+
+    
+
 	// Infinite loop for our application
     bool gameIsRunning = true;
     // Main application loop
+    uint32_t startT = SDL_GetTicks();
+
+   index_t move; 
+
     while(gameIsRunning){
 	SDL_Event event;
 
 	// (1) Handle Input
 	// Start our event loop
+	// Petla eventowa zajmuje 150 ms
 	while(SDL_PollEvent(&event)){
 	    // Handle each specific event
+   	    
+		if(event.key.keysym.sym == SDLK_UP) 
+			move = MV_UP;
+		if(event.key.keysym.sym == SDLK_DOWN)
+			move = MV_DOWN;
+		if(event.key.keysym.sym == SDLK_LEFT)
+			move = MV_LEFT; 
+		if(event.key.keysym.sym == SDLK_RIGHT) 
+			move = MV_RIGHT;
+	
+ 
 	    if(event.type == SDL_QUIT){
 		gameIsRunning= false;
 	    }
+	//printf("Nie minelo 1000 m/s, wartosc startT=%d\n", SDL_GetTicks() - startT );
 
 	}
-	// (2) Handle Updates
-	
-	// (3) Clear and Draw the Screen
-	// Gives us a clear "canvas"
-	SDL_SetRenderDrawColor(renderer,0,0,0xFF,SDL_ALPHA_OPAQUE);	
-	SDL_RenderClear(renderer);
-	// Finally show what we've drawn
-	//SDL_SetRenderDrawColor(renderer,0xff,0,0x0, SDL_ALPHA_OPAQUE);
-	//SDL_RenderDrawRect(renderer, &rectangle);
-	//SDL_RenderCopy(renderer,ourPNG,NULL,&rectangle);
-	SDL_RenderCopy(renderer,marioPNG,NULL,&rectangle);
-	gfx_printTheBoard(renderer, ourPNG, myGame.board);
-	
-	SDL_RenderPresent(renderer);
+	if(SDL_GetTicks() - startT>20){
+		srand(time(0));
+		index_t move2 = generateRandomPossibleMove(&myGame.ghostIndex, myGame.board);
+		moveRespectingRules(move2, &myGame.ghostIndex, myGame.board);
+		moveRespectingRules(move, &myGame.marioIndex, myGame.board);	
+		
+    		rectangle.x = myGame.marioIndex.x*GFX_BRICK_SIZE;
+    		rectangle.y = myGame.marioIndex.y*GFX_BRICK_SIZE;
+		ghostRect.x = myGame.ghostIndex.x*GFX_BRICK_SIZE;
+		ghostRect.y = myGame.ghostIndex.y*GFX_BRICK_SIZE;
+		SDL_SetRenderDrawColor(renderer,0,0,0xFF,SDL_ALPHA_OPAQUE);	
+		SDL_RenderClear(renderer);
+		//SDL_RenderCopy(renderer,ourPNG,NULL,&rectangle);
+		SDL_RenderCopy(renderer,marioPNG,NULL,&rectangle);
+		SDL_RenderCopy(renderer, ghostPNG, NULL, &ghostRect);
+		gfx_printTheBoard(renderer, ourPNG, myGame.board);	
+		SDL_RenderPresent(renderer);
+		//printf("Minelo 1000 m/s, wartosc startT=%d\n", SDL_GetTicks() - startT );
+		startT = SDL_GetTicks();
+		move = (index_t) {0,0};
+		printTheBoard(myGame.board);
+	}
     }
 
     // We destroy our window. We are passing in the pointer

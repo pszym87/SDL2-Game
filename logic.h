@@ -4,8 +4,8 @@
 #define MV_DOWN			(index_t){1,0}
 #define MV_LEFT			(index_t){0,-1}
 #define MV_RIGHT		(index_t){0,1}
-#define BSIZE_HEIGHT		4
-#define BSIZE_WIDTH		8		
+#define BSIZE_HEIGHT		27
+#define BSIZE_WIDTH		18		
 #define MAX_SINGLE_PRIZE	4
 /**
  * \file logic.h
