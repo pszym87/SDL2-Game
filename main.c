@@ -15,19 +15,16 @@ clang main.c logic.c -L/opt/homebrew/lib -lSDL2 -L/opt/homebrew/Cellar/sdl2_ttf/
 #define ASC_DOWN		'k'
 #define ASC_LEFT		'j'
 #define ASC_RIGHT		'l'
-
-
-// KOMENTARZ #1
-// chcialbym to jeszcze zakodowac na wskaznikach wielowymiarowych (podwojnych) - zeby to sobie dobrze przecwiczyc
-
-// KOMENTAZR #2
-// chcialbym to jeszcze zakodowac z uzyciem wyrazenia regularnego ? (expression)
-// nie mozna miec w ternary operatorze returna
+#define GFX_BRICK_SIZE		30
 
 void printTheBoard(int[BSIZE_HEIGHT][BSIZE_WIDTH]);
 void printIndexPosition(index_t);
 void twoPlayersPlay(index_t*, index_t*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
 void onePlayerPlay(index_t*, index_t*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
+
+//gfx
+void gfx_printTheBoard(SDL_Renderer *renderer, SDL_Texture *image, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
+
 
 typedef struct game{
 	int board[BSIZE_HEIGHT][BSIZE_WIDTH];
@@ -66,7 +63,7 @@ int main(){
     // Request a window to be created for our platform
     // The parameters are for the title, x and y position,
     // and the width and height of the window.
-    window = SDL_CreateWindow("C++ SDL2 Window",20, 20, 640,480,SDL_WINDOW_SHOWN);
+    window = SDL_CreateWindow("C SDL2 Window",20, 20, 640,480,SDL_WINDOW_SHOWN);
 
     SDL_Renderer* renderer = NULL;
     renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED);
@@ -80,14 +77,23 @@ int main(){
     }
 
     SDL_Surface* image;
-    image = IMG_Load("./images/mario.png");
+    SDL_Surface *img_mario;
+    image = IMG_Load("./images/brick.png");
+    img_mario = IMG_Load("./images/mario.png");
     if(!image){
 	printf("Image not loaded...");
     }
 
     SDL_Texture* ourPNG = SDL_CreateTextureFromSurface(renderer, image);
+    SDL_Texture *marioPNG = SDL_CreateTextureFromSurface(renderer, img_mario);
 
-    // Infinite loop for our application
+    SDL_Rect rectangle;
+    rectangle.x = myGame.marioIndex.x*GFX_BRICK_SIZE;
+    rectangle.y = myGame.marioIndex.y*GFX_BRICK_SIZE;
+    rectangle.w = 30;
+    rectangle.h = 30;
+
+	// Infinite loop for our application
     bool gameIsRunning = true;
     // Main application loop
     while(gameIsRunning){
@@ -106,12 +112,15 @@ int main(){
 	
 	// (3) Clear and Draw the Screen
 	// Gives us a clear "canvas"
-	SDL_SetRenderDrawColor(renderer,0,0,0xFF,SDL_ALPHA_OPAQUE);
+	SDL_SetRenderDrawColor(renderer,0,0,0xFF,SDL_ALPHA_OPAQUE);	
 	SDL_RenderClear(renderer);
-
-	SDL_RenderCopy(renderer,ourPNG,NULL,NULL);
-
 	// Finally show what we've drawn
+	//SDL_SetRenderDrawColor(renderer,0xff,0,0x0, SDL_ALPHA_OPAQUE);
+	//SDL_RenderDrawRect(renderer, &rectangle);
+	//SDL_RenderCopy(renderer,ourPNG,NULL,&rectangle);
+	SDL_RenderCopy(renderer,marioPNG,NULL,&rectangle);
+	gfx_printTheBoard(renderer, ourPNG, myGame.board);
+	
 	SDL_RenderPresent(renderer);
     }
 
@@ -131,13 +140,26 @@ int main(){
     // Quit our program.
     SDL_Quit();
 
-
 	printIndexPosition(myGame.marioIndex);
 	printIndexPosition(myGame.ghostIndex);
 	printTheBoard(myGame.board);
 	onePlayerPlay(&myGame.marioIndex, &myGame.ghostIndex, myGame.board);
 }
- 
+
+
+void gfx_printTheBoard(SDL_Renderer *renderer, SDL_Texture *image, int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
+	SDL_Rect rec;
+	for(int i=0; i<BSIZE_HEIGHT; i++)
+		for(int j=0; j<BSIZE_WIDTH; j++)
+			if(board[i][j] ==-1){
+				rec.x = j*GFX_BRICK_SIZE;
+				rec.y = i*GFX_BRICK_SIZE;
+				rec.w = GFX_BRICK_SIZE;
+				rec.h = GFX_BRICK_SIZE;
+				SDL_RenderCopy(renderer,image,NULL,&rec);
+			
+		} 
+}
 void printTheBoard(int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
 	
 	printf("\n\n=== The board ===\n\n"); 	
