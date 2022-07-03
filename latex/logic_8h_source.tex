@@ -1,0 +1,35 @@
+\hypertarget{logic_8h_source}{}\doxysection{logic.\+h}
+\mbox{\hyperlink{logic_8h}{Go to the documentation of this file.}}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{1 \textcolor{preprocessor}{\#ifndef LOGIC\_H}}
+\DoxyCodeLine{2 \textcolor{preprocessor}{\#define LOGIC\_H}}
+\DoxyCodeLine{3 \textcolor{preprocessor}{\#define MV\_UP           (index\_t)\{-\/1,0\}}}
+\DoxyCodeLine{4 \textcolor{preprocessor}{\#define MV\_DOWN         (index\_t)\{1,0\}}}
+\DoxyCodeLine{5 \textcolor{preprocessor}{\#define MV\_LEFT         (index\_t)\{0,-\/1\}}}
+\DoxyCodeLine{6 \textcolor{preprocessor}{\#define MV\_RIGHT        (index\_t)\{0,1\}}}
+\DoxyCodeLine{7 \textcolor{preprocessor}{\#define BSIZE\_HEIGHT        4}}
+\DoxyCodeLine{8 \textcolor{preprocessor}{\#define BSIZE\_WIDTH     8       }}
+\DoxyCodeLine{9 \textcolor{preprocessor}{\#define MAX\_SINGLE\_PRIZE    4}}
+\DoxyCodeLine{54 \textcolor{keyword}{typedef} \textcolor{keyword}{struct }\mbox{\hyperlink{structindex}{index}}\{}
+\DoxyCodeLine{55     \textcolor{keywordtype}{int} y;}
+\DoxyCodeLine{56     \textcolor{keywordtype}{int} x;}
+\DoxyCodeLine{57 \} \mbox{\hyperlink{logic_8h_a049e023695b2695e3e72354baf3d46f6}{index\_t}};}
+\DoxyCodeLine{58 }
+\DoxyCodeLine{70 \textcolor{keywordtype}{int} \mbox{\hyperlink{logic_8h_a34cdc82bc96ed4dfd0252d6b80c61433}{swap}}(\textcolor{keywordtype}{int} *miejsce1, \textcolor{keywordtype}{int} *miejsce2);}
+\DoxyCodeLine{71 }
+\DoxyCodeLine{84 \textcolor{keywordtype}{int} \mbox{\hyperlink{logic_8h_a009b80c80dccc0e9f3b602de547dc9b1}{consumeAndSwap}}(\textcolor{keywordtype}{int} *miejsce1, \textcolor{keywordtype}{int} *miejsce2);}
+\DoxyCodeLine{85 }
+\DoxyCodeLine{94 \mbox{\hyperlink{structindex}{index\_t}} \mbox{\hyperlink{logic_8h_a8a19051134415399f295b6e6a1f421fe}{getAnIndexPositionOf}}(\textcolor{keywordtype}{int} value, \textcolor{keywordtype}{int} board[\mbox{\hyperlink{logic_8h_ab0b510fbadb314d41f03a13938272d23}{BSIZE\_HEIGHT}}][\mbox{\hyperlink{logic_8h_a3ebfadb0a99031f97f05442a63978819}{BSIZE\_WIDTH}}]);}
+\DoxyCodeLine{95 }
+\DoxyCodeLine{103 \textcolor{keywordtype}{void} \mbox{\hyperlink{logic_8h_af99a4abbdc33ce879040d1506d4479a2}{printIndexPosition}}(\mbox{\hyperlink{structindex}{index\_t}} position);}
+\DoxyCodeLine{104 }
+\DoxyCodeLine{105 }
+\DoxyCodeLine{120 \textcolor{keywordtype}{void} \mbox{\hyperlink{logic_8h_ae89309df3319235016355447970c15c9}{moveRespectingRules}}(\mbox{\hyperlink{structindex}{index\_t}} positionChangeRequest, \mbox{\hyperlink{structindex}{index\_t}} *currentPositionOfFigure, \textcolor{keywordtype}{int} board[\mbox{\hyperlink{logic_8h_ab0b510fbadb314d41f03a13938272d23}{BSIZE\_HEIGHT}}][\mbox{\hyperlink{logic_8h_a3ebfadb0a99031f97f05442a63978819}{BSIZE\_WIDTH}}]);}
+\DoxyCodeLine{121 }
+\DoxyCodeLine{130 \mbox{\hyperlink{structindex}{index\_t}} \mbox{\hyperlink{logic_8h_ac430a16e1b47774027c2386320c1989e}{generateRandomPossibleMove}}(\mbox{\hyperlink{structindex}{index\_t}} *currentPositionOfFigure, \textcolor{keywordtype}{int} board[\mbox{\hyperlink{logic_8h_ab0b510fbadb314d41f03a13938272d23}{BSIZE\_HEIGHT}}][\mbox{\hyperlink{logic_8h_a3ebfadb0a99031f97f05442a63978819}{BSIZE\_WIDTH}}]);}
+\DoxyCodeLine{131 }
+\DoxyCodeLine{140 \textcolor{keywordtype}{int} \mbox{\hyperlink{logic_8h_a6d30af3e342fbc60d6867e51a3b50490}{czyMozliwy}}(\mbox{\hyperlink{structindex}{index\_t}} positionChangeRequest, \mbox{\hyperlink{structindex}{index\_t}}*, \textcolor{keywordtype}{int} board[\mbox{\hyperlink{logic_8h_ab0b510fbadb314d41f03a13938272d23}{BSIZE\_HEIGHT}}][\mbox{\hyperlink{logic_8h_a3ebfadb0a99031f97f05442a63978819}{BSIZE\_WIDTH}}]);}
+\DoxyCodeLine{141 }
+\DoxyCodeLine{142 \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

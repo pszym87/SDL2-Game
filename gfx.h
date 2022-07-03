@@ -1,0 +1,1 @@
+//tutaj beda definicje naglowkow
