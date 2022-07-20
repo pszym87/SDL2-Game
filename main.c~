@@ -10,6 +10,7 @@ clang main.c logic.c -L/opt/homebrew/lib -lSDL2 -L/opt/homebrew/Cellar/sdl2_ttf/
 #include <SDL_image.h>
 #include <stdbool.h>
 #include <math.h>
+#include "gfx.h"
 
 #define ASC_UP			'i'
 #define ASC_DOWN		'k'
@@ -24,18 +25,18 @@ void onePlayerPlay(index_t*, index_t*, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
 
 //gfx
 void gfx_printTheBoard(SDL_Renderer *renderer, SDL_Texture *image, int[BSIZE_HEIGHT][BSIZE_WIDTH]);
-
-
+/*
 typedef struct game{
 	int board[BSIZE_HEIGHT][BSIZE_WIDTH];
 	index_t marioIndex;
 	index_t	ghostIndex;
 } t_game;
+*/
 
 
 int main(){
 	
-	t_game myGame ={{
+	game_t myGame ={{
 	{ -1 ,  1 , 10 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
@@ -48,12 +49,12 @@ int main(){
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 ,  1 ,  1 , 1 ,  1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 ,  1 ,  1 , 1 ,  1, 1 ,1, 400, 1, -1, -1, 1, 1, -1, 1, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1,  1, -1, 1, 1, -1, 1, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 4, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 4, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
@@ -63,16 +64,17 @@ int main(){
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1}
-	},{0,0},{0,0}}; 
+	},{0,0},{0,0},SPLAY}; 
 	myGame.marioIndex = getAnIndexPositionOf(10,myGame.board);
-	myGame.ghostIndex = getAnIndexPositionOf(4,myGame.board);
+	myGame.ghostIndex = getAnIndexPositionOf(400,myGame.board);
 	
 
+    gfx_t myGfx;
 	
     // Create a window data type
     // This pointer will point to the 
     // window that is allocated from SDL_CreateWindow
-    SDL_Window* window=NULL;
+    myGfx.window=NULL;
 
     // Initialize the video subsystem.
     // iF it returns less than 1, then an
@@ -86,10 +88,10 @@ int main(){
     // Request a window to be created for our platform
     // The parameters are for the title, x and y position,
     // and the width and height of the window.
-    window = SDL_CreateWindow("C SDL2 Window",20, 20, 640,640,SDL_WINDOW_SHOWN);
+    myGfx.window = SDL_CreateWindow("C SDL2 Window",20, 20, 640,640,SDL_WINDOW_SHOWN);
 
-    SDL_Renderer* renderer = NULL;
-    renderer = SDL_CreateRenderer(window,-1,SDL_RENDERER_ACCELERATED);
+    myGfx.renderer = NULL;
+    myGfx.renderer = SDL_CreateRenderer(myGfx.window,-1,SDL_RENDERER_ACCELERATED);
 
     // Setup and initialize the SDL2_Image library
     // with our supported formats
@@ -108,9 +110,9 @@ int main(){
 	printf("Image not loaded...");
     }
 
-    SDL_Texture* ourPNG = SDL_CreateTextureFromSurface(renderer, image);
-    SDL_Texture *marioPNG = SDL_CreateTextureFromSurface(renderer, img_mario); 
-    SDL_Texture *ghostPNG = SDL_CreateTextureFromSurface(renderer, img_ghost);
+    SDL_Texture* ourPNG = SDL_CreateTextureFromSurface(myGfx.renderer, image);
+    SDL_Texture *marioPNG = SDL_CreateTextureFromSurface(myGfx.renderer, img_mario); 
+    SDL_Texture *ghostPNG = SDL_CreateTextureFromSurface(myGfx.renderer, img_ghost);
 
     SDL_Rect rectangle, ghostRect;
     rectangle.x = myGame.marioIndex.x*GFX_BRICK_SIZE;
@@ -130,56 +132,63 @@ int main(){
     // Main application loop
     uint32_t startT = SDL_GetTicks();
 
-   index_t move; 
+   index_t move = (index_t){0,0}; 
 
     while(gameIsRunning){
-	SDL_Event event;
+	if(myGame.gameStatus == SPLAY){
+		SDL_Event event;
 
-	// (1) Handle Input
-	// Start our event loop
-	// Petla eventowa zajmuje 150 ms
-	while(SDL_PollEvent(&event)){
-	    // Handle each specific event
-   	    
-		if(event.key.keysym.sym == SDLK_UP) 
-			move = MV_UP;
-		if(event.key.keysym.sym == SDLK_DOWN)
-			move = MV_DOWN;
-		if(event.key.keysym.sym == SDLK_LEFT)
-			move = MV_LEFT; 
-		if(event.key.keysym.sym == SDLK_RIGHT) 
-			move = MV_RIGHT;
-	
- 
-	    if(event.type == SDL_QUIT){
-		gameIsRunning= false;
-	    }
-	//printf("Nie minelo 1000 m/s, wartosc startT=%d\n", SDL_GetTicks() - startT );
-
-	}
-	if(SDL_GetTicks() - startT>200){
-		srand(time(0));
-		index_t move2 = generateRandomPossibleMove(&myGame.ghostIndex, myGame.board);
-		moveRespectingRules(move2, &myGame.ghostIndex, myGame.board);
-		moveRespectingRules(move, &myGame.marioIndex, myGame.board);	
+		// (1) Handle Input
+		// Start our event loop
+		// Petla eventowa zajmuje 150 ms
+		while(SDL_PollEvent(&event)){
+		    // Handle each specific event
+		    
+			if(event.key.keysym.sym == SDLK_UP) 
+				move = MV_UP;
+			if(event.key.keysym.sym == SDLK_DOWN)
+				move = MV_DOWN;
+			if(event.key.keysym.sym == SDLK_LEFT)
+				move = MV_LEFT; 
+			if(event.key.keysym.sym == SDLK_RIGHT) 
+				move = MV_RIGHT;
 		
-    		rectangle.x = myGame.marioIndex.x*GFX_BRICK_SIZE;
-    		rectangle.y = myGame.marioIndex.y*GFX_BRICK_SIZE;
-		ghostRect.x = myGame.ghostIndex.x*GFX_BRICK_SIZE;
-		ghostRect.y = myGame.ghostIndex.y*GFX_BRICK_SIZE;
-		SDL_SetRenderDrawColor(renderer,0,0,0xFF,SDL_ALPHA_OPAQUE);	
-		SDL_RenderClear(renderer);
-		//SDL_RenderCopy(renderer,ourPNG,NULL,&rectangle);
-		SDL_RenderCopy(renderer,marioPNG,NULL,&rectangle);
-		SDL_RenderCopy(renderer, ghostPNG, NULL, &ghostRect);
-		gfx_printTheBoard(renderer, ourPNG, myGame.board);
-		SDL_SetRenderDrawColor(renderer, 255,255,0,255);
-		SDL_RenderDrawPoint(renderer, 100,100);	
-		SDL_RenderPresent(renderer);
-		//printf("Minelo 1000 m/s, wartosc startT=%d\n", SDL_GetTicks() - startT );
-		startT = SDL_GetTicks();
-		move = (index_t) {0,0};
-		printTheBoard(myGame.board);
+	 
+		    if(event.type == SDL_QUIT){
+			gameIsRunning= false;
+		    }
+		//printf("Nie minelo 1000 m/s, wartosc startT=%d\n", SDL_GetTicks() - startT );
+
+		}
+		if(SDL_GetTicks() - startT>120){
+			srand(time(0));
+			index_t move2 = generateRandomPossibleMove(&myGame.ghostIndex, myGame.board);
+			moveRespectingRules(move2,&myGame);
+			moveRespectingRules_new(move, &myGame);	
+			
+			rectangle.x = myGame.marioIndex.x*GFX_BRICK_SIZE;
+			rectangle.y = myGame.marioIndex.y*GFX_BRICK_SIZE;
+			ghostRect.x = myGame.ghostIndex.x*GFX_BRICK_SIZE;
+			ghostRect.y = myGame.ghostIndex.y*GFX_BRICK_SIZE;
+			SDL_SetRenderDrawColor(myGfx.renderer,0,0,0xFF,SDL_ALPHA_OPAQUE);	
+			SDL_RenderClear(myGfx.renderer);
+			//SDL_RenderCopy(renderer,ourPNG,NULL,&rectangle);
+			SDL_RenderCopy(myGfx.renderer,marioPNG,NULL,&rectangle);
+			SDL_RenderCopy(myGfx.renderer, ghostPNG, NULL, &ghostRect);
+			gfx_printTheBoard(myGfx.renderer, ourPNG, myGame.board);
+			gfx_printScore(myGfx, myGame); // <--- printScore();
+
+			SDL_SetRenderDrawColor(myGfx.renderer, 255,255,0,255);
+			SDL_RenderDrawPoint(myGfx.renderer, 100,100);	
+			SDL_RenderPresent(myGfx.renderer);
+			//printf("Minelo 1000 m/s, wartosc startT=%d\n", SDL_GetTicks() - startT );
+			startT = SDL_GetTicks();
+			move = (index_t) {0,0};
+			printTheBoard(myGame.board);
+	}
+	} else{
+			SDL_SetRenderDrawColor(myGfx.renderer,255,0,0,SDL_ALPHA_OPAQUE);
+			SDL_RenderClear(myGfx.renderer);
 	}
     }
 
@@ -187,7 +196,7 @@ int main(){
     // that points to the memory allocated by the 
     // 'SDL_CreateWindow' function. Remember, this is
     // a 'C-style' API, we don't have destructors.
-    SDL_DestroyWindow(window);
+    SDL_DestroyWindow(myGfx.window);
     
     // Free our png image surface
     SDL_FreeSurface(image);
@@ -205,6 +214,7 @@ int main(){
 	onePlayerPlay(&myGame.marioIndex, &myGame.ghostIndex, myGame.board);
 }
 
+	
 
 void gfx_printTheBoard(SDL_Renderer *renderer, SDL_Texture *image, int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
 	SDL_Rect rec;
@@ -222,6 +232,9 @@ void gfx_printTheBoard(SDL_Renderer *renderer, SDL_Texture *image, int board[BSI
 					
 					SDL_SetRenderDrawColor(renderer, 255,255,0,SDL_ALPHA_OPAQUE);
 					SDL_RenderDrawPoint(renderer,j*GFX_BRICK_SIZE+GFX_BRICK_SIZE/2, i*GFX_BRICK_SIZE+GFX_BRICK_SIZE/2);
+				}
+				else if(board[i][j] == 0){
+					
 				}
 			}
 			
@@ -279,10 +292,10 @@ void twoPlayersPlay(index_t *marioIndex, index_t *ghostIndex, int board[BSIZE_HE
 		}
 		if(zmianaFigury++%2 == 0){
 			printf("Ruch Mario: \n");
-			moveRespectingRules(move, marioIndex, board);
+			//moveRespectingRules(move, marioIndex, board);
 		} else{
 			printf("Ruch Duszka: \n");
-			moveRespectingRules(move, ghostIndex, board);
+			//moveRespectingRules(move, ghostIndex, board);
 		}
 		
 		printTheBoard(board);
@@ -321,12 +334,12 @@ void onePlayerPlay(index_t *marioIndex, index_t *ghostIndex, int board[BSIZE_HEI
 					move = MV_RIGHT;
 					break;
 			}
-			moveRespectingRules(move, marioIndex, board);
+			//moveRespectingRules(move, marioIndex, board);
 		}else{
 			zmianaFigury++;
 			move = generateRandomPossibleMove(ghostIndex, board);
 			printf("Move: x=%d, y=%d\n", move.x, move.y);
-			moveRespectingRules(move, ghostIndex, board);
+			//moveRespectingRules(move, ghostIndex, board);
 			// zatrzymalem sie na etapie przekazywania informacji o stanie
 			// gry. Mam do rozwiazania nastepujace problemy:
 			// jak prezentowac w grze moment "zbijania" jednej figury przez druga?

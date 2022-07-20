@@ -27,13 +27,60 @@ index_t getAnIndexPositionOf(int value, int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
 			if(value == board[i][j])
 				return (index_t){i,j};  					
 }
-void moveRespectingRules(index_t positionChangeRequest, index_t *currentPositionOfFigure, int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
+
+
+void moveRespectingRules_new(index_t positionChangeRequest, game_t *gm){
+
+	if(!(positionChangeRequest.x==0 && positionChangeRequest.y==0)){
+		// Zmienia tablice w poniekad liste cykliczna
+		// Pozwala to na wykonanie skokow figury z ostatniego indeksu do pierwszego i na odwrot
+
+		int newPositionX = (gm->marioIndex.x + positionChangeRequest.x);
+		int newPositionY = (gm->marioIndex.y + positionChangeRequest.y);
+		
+		if(newPositionY < 0) newPositionY = BSIZE_HEIGHT-1;
+		if(newPositionX < 0) newPositionX = BSIZE_WIDTH-1;
+		  
+		if(newPositionY > BSIZE_HEIGHT-1) newPositionY = 0;
+		if(newPositionX > BSIZE_WIDTH-1) newPositionX = 0; 
+
+		printf("\nRequest dla pozycji:y=%d x=%d", newPositionY, newPositionX);
+		// sprawdza czy ruch jest mozliwy do wykonania na boardzie (czy nie ma sciany)
+		if(gm->board[newPositionY][newPositionX]==-1){
+			// do nothing
+		}
+		if(gm->board[newPositionY][newPositionX]>=0){
+			
+			if(newPositionY == gm->ghostIndex.y && newPositionX == gm->ghostIndex.x){
+				gm->gameStatus = SSTOP;
+			}	
+
+			else{
+				//zamien pozycjami pacmana z "nagroda"
+				printf("** ruch mario o x=%d y=%d **", positionChangeRequest.x, positionChangeRequest.y);
+				int prize = consumeAndSwap(&gm->board[gm->marioIndex.y][gm->marioIndex.x],
+					       &gm->board[newPositionY][newPositionX]);
+				//if(prize>400)
+				//	printf("\nYOU KINDA LOOSE\n");
+				//	gm->gameStatus = SSTOP;
+					
+
+			//zaktualizuj koordynaty figury 
+			gm->marioIndex.x = newPositionX;
+			gm->marioIndex.y = newPositionY;
+			}
+		}
+	}
+
+}
+
+void moveRespectingRules(index_t positionChangeRequest, game_t *gm){
 
 	// Zmienia tablice w poniekad liste cykliczna
         // Pozwala to na wykonanie skokow figury z ostatniego indeksu do pierwszego i na odwrot
 
-        int newPositionX = (currentPositionOfFigure->x + positionChangeRequest.x);
-	int newPositionY = (currentPositionOfFigure->y + positionChangeRequest.y);
+        int newPositionX = (gm->ghostIndex.x + positionChangeRequest.x);
+	int newPositionY = (gm->ghostIndex.y + positionChangeRequest.y);
 	
 	if(newPositionY < 0) newPositionY = BSIZE_HEIGHT-1;
 	if(newPositionX < 0) newPositionX = BSIZE_WIDTH-1;
@@ -43,29 +90,21 @@ void moveRespectingRules(index_t positionChangeRequest, index_t *currentPosition
 
 	printf("\nRequest dla pozycji:y=%d x=%d", newPositionY, newPositionX);
 	// sprawdza czy ruch jest mozliwy do wykonania na boardzie (czy nie ma sciany)
-	if(board[newPositionY][newPositionX]>=0){
-		// jesli mario
-		if(board[currentPositionOfFigure->y][currentPositionOfFigure->x] > MAX_SINGLE_PRIZE){
-			//zamien pozycjami pacmana z "nagroda"
-			printf("** ruch mario o x=%d y=%d **", positionChangeRequest.x, positionChangeRequest.y);
-			int prize = consumeAndSwap(&board[currentPositionOfFigure->y][currentPositionOfFigure->x],
-				       &board[newPositionY][newPositionX]);
-			if(prize>14)
-				printf("\nYOU KINDA WIN\n");
-			 	
+	if(gm->board[newPositionY][newPositionX]==-1){
+        	// do nothing
+	}else if(gm->board[newPositionY][newPositionX]>=0){				
+		if(newPositionY==gm->marioIndex.y && newPositionX==gm->marioIndex.x){
+				printf("You LOOSE!\n");
+				gm->gameStatus = SSTOP;
+		}else{
+		printf("** ruch potworka o x=%d y=%d **", positionChangeRequest.x, positionChangeRequest.y);
+		swap(&gm->board[gm->ghostIndex.y][gm->ghostIndex.x],&gm->board[newPositionY][newPositionX]);
+		gm->ghostIndex.x = newPositionX;
+		gm->ghostIndex.y = newPositionY;
 		}	
-		else{ // jesli potworek
-			printf("** ruch potworka o x=%d y=%d **", positionChangeRequest.x, positionChangeRequest.y);
-			int prize = swap(&board[currentPositionOfFigure->y][currentPositionOfFigure->x],
-			     &board[newPositionY][newPositionX]);
-			if(prize>=14)
-				printf("\nYOU LOSE!\n");
-		}
-		//zaktualizuj koordynaty figury 
-		currentPositionOfFigure->x = newPositionX;
-		currentPositionOfFigure->y = newPositionY;
 	}
-
+	
+	//zaktualizuj koordynaty figury 
 }
 
 index_t generateRandomPossibleMove(index_t *currentPositionOfFigure,int board[BSIZE_HEIGHT][BSIZE_WIDTH]){

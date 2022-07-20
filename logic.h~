@@ -4,9 +4,12 @@
 #define MV_DOWN			(index_t){1,0}
 #define MV_LEFT			(index_t){0,-1}
 #define MV_RIGHT		(index_t){0,1}
-#define BSIZE_HEIGHT		4
-#define BSIZE_WIDTH		8		
+#define BSIZE_HEIGHT		27
+#define BSIZE_WIDTH		18		
 #define MAX_SINGLE_PRIZE	4
+#define SPLAY			1
+#define SPAUSE			2
+#define SSTOP			0
 /**
  * \file logic.h
  * \brief Zbior elementow odpowiadajacych
@@ -56,6 +59,12 @@ typedef struct index{
 	int x;
 } index_t;
 
+typedef struct game{
+	int board[BSIZE_HEIGHT][BSIZE_WIDTH];
+	index_t marioIndex;
+	index_t	ghostIndex;
+	int gameStatus;
+} game_t;
 /**
  * \brief Ta funkcja przesuwaja sie potworki
  *
@@ -95,6 +104,19 @@ index_t getAnIndexPositionOf(int value, int board[BSIZE_HEIGHT][BSIZE_WIDTH]);
 
 
 /**
+ * \brief Wykonaj ruch Mario. Testowa implementacja. 
+ *
+ * Glowna funkcja odpowiadajaca za reguly gry dla Mario. 
+ * Funkcja sprawdza czy mozliwe jest wykonanie ruchu i uaktualnia plansze po wykonaniu ruchu. 
+ * Jesli ruch jest wykonany uaktualniana jest pozycja figury podana w argumencie *currentPositionOfFigure
+ * oraz na planszy gry podana w argumencie board.
+ * Po ruchu aktualizowana jest flaga gry (sukces, porazka lub bez zmian)
+ 
+ * \param positionChangeRequest intencja zmiany pozycji opisana jako koordynaty
+ *	  x,y; dozwolony ruch o 1 w osi x lub y
+ * \param *gm Wskaznik do struktury gry  */
+void moveRespectingRules_new(index_t positionChangeRequest, game_t *gm);
+/**
  * \brief Wykonaj ruch. Implementacja regul gry. 
  *
  * Glowna funkcja odpowiadajaca za reguly gry. Sluzy do wyprowadzenia ruchu dla kazdej figury.
@@ -108,7 +130,7 @@ index_t getAnIndexPositionOf(int value, int board[BSIZE_HEIGHT][BSIZE_WIDTH]);
  * \param *currentPositionOfFigure okreslenie ktorej figury dotyczy ruch
  * \param board Plansza gry. 
  */
-void moveRespectingRules(index_t positionChangeRequest, index_t *currentPositionOfFigure, int board[BSIZE_HEIGHT][BSIZE_WIDTH]);
+void moveRespectingRules(index_t positionChangeRequest, game_t *gm);
 
 /**
  * \brief Wygeneruj losowy wykonalny ruch dla podanej figury
