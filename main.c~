@@ -35,42 +35,13 @@ typedef struct game{
 
 
 int main(){
-	
-	game_t myGame ={{
-	{ -1 ,  1 , 10 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1,  1,  1, 1, 1,  1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 ,  1 ,  1 , 1 ,  1, 1 ,1, 400, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1,  1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 4, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 , -1, 1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1}
-	},{0,0},{0,0},SPLAY}; 
-	myGame.marioIndex = getAnIndexPositionOf(10,myGame.board);
-	myGame.ghostIndex = getAnIndexPositionOf(400,myGame.board);
-	
+ 	
 
-    gfx_t myGfx;
-	
+	game_t myGame;
+	gfx_t myGfx;
+
+	gameInit(&myGame, 3);	
+
     // Create a window data type
     // This pointer will point to the 
     // window that is allocated from SDL_CreateWindow
@@ -85,6 +56,9 @@ int main(){
     }else{
 	printf("SDL video system is ready to go\n");
     }
+
+	TTF_Init();
+
     // Request a window to be created for our platform
     // The parameters are for the title, x and y position,
     // and the width and height of the window.
@@ -114,16 +88,16 @@ int main(){
     SDL_Texture *marioPNG = SDL_CreateTextureFromSurface(myGfx.renderer, img_mario); 
     SDL_Texture *ghostPNG = SDL_CreateTextureFromSurface(myGfx.renderer, img_ghost);
 
+
+	myGfx.myImgs = (gfx_imgs_t){marioPNG, ghostPNG, ourPNG};
+
+
     SDL_Rect rectangle, ghostRect;
     rectangle.x = myGame.marioIndex.x*GFX_BRICK_SIZE;
     rectangle.y = myGame.marioIndex.y*GFX_BRICK_SIZE;
     rectangle.w = 30;
     rectangle.h = 30;
 
-    ghostRect.x = myGame.ghostIndex.x*GFX_BRICK_SIZE;
-    ghostRect.y = myGame.ghostIndex.y*GFX_BRICK_SIZE;
-    ghostRect.w = 30;
-    ghostRect.h = 30;
 
     
 
@@ -160,23 +134,29 @@ int main(){
 		//printf("Nie minelo 1000 m/s, wartosc startT=%d\n", SDL_GetTicks() - startT );
 
 		}
-		if(SDL_GetTicks() - startT>120){
+		if(SDL_GetTicks() - startT>200){
 			srand(time(0));
-			index_t move2 = generateRandomPossibleMove(&myGame.ghostIndex, myGame.board);
-			moveRespectingRules(move2,&myGame);
+			index_t move2 = generateRandomPossibleMove(myGame.ghostIndex, myGame.board);	
+			index_t move3 = generateRandomPossibleMove(myGame.ghostIndex+1, myGame.board);
+			index_t move4 = generateRandomPossibleMove(myGame.ghostIndex+2, myGame.board);
+			moveRespectingRules(move2,&myGame,0);
+			moveRespectingRules(move3, &myGame, 1);
+			moveRespectingRules(move4, &myGame, 2);
 			moveRespectingRules_new(move, &myGame);	
 			
 			rectangle.x = myGame.marioIndex.x*GFX_BRICK_SIZE;
 			rectangle.y = myGame.marioIndex.y*GFX_BRICK_SIZE;
-			ghostRect.x = myGame.ghostIndex.x*GFX_BRICK_SIZE;
-			ghostRect.y = myGame.ghostIndex.y*GFX_BRICK_SIZE;
+			//ghostRect.x = myGame.ghostIndex.x*GFX_BRICK_SIZE;
+			//ghostRect.y = myGame.ghostIndex.y*GFX_BRICK_SIZE;
 			SDL_SetRenderDrawColor(myGfx.renderer,0,0,0xFF,SDL_ALPHA_OPAQUE);	
 			SDL_RenderClear(myGfx.renderer);
 			//SDL_RenderCopy(renderer,ourPNG,NULL,&rectangle);
+			
+			gfx_renderGhosts(&myGame, &myGfx);
 			SDL_RenderCopy(myGfx.renderer,marioPNG,NULL,&rectangle);
 			SDL_RenderCopy(myGfx.renderer, ghostPNG, NULL, &ghostRect);
 			gfx_printTheBoard(myGfx.renderer, ourPNG, myGame.board);
-			gfx_printScore(myGfx, myGame); // <--- printScore();
+			gfx_printScore(&myGfx,&myGame); // <--- printScore();
 
 			SDL_SetRenderDrawColor(myGfx.renderer, 255,255,0,255);
 			SDL_RenderDrawPoint(myGfx.renderer, 100,100);	
@@ -209,9 +189,9 @@ int main(){
     SDL_Quit();
 
 	printIndexPosition(myGame.marioIndex);
-	printIndexPosition(myGame.ghostIndex);
+	printIndexPosition(*myGame.ghostIndex);
 	printTheBoard(myGame.board);
-	onePlayerPlay(&myGame.marioIndex, &myGame.ghostIndex, myGame.board);
+	onePlayerPlay(&myGame.marioIndex, myGame.ghostIndex, myGame.board);
 }
 
 	

@@ -1,3 +1,5 @@
+#include <stdbool.h> 
+
 #ifndef LOGIC_H
 #define LOGIC_H
 #define MV_UP			(index_t){-1,0}
@@ -62,9 +64,14 @@ typedef struct index{
 typedef struct game{
 	int board[BSIZE_HEIGHT][BSIZE_WIDTH];
 	index_t marioIndex;
-	index_t	ghostIndex;
+	index_t	*ghostIndex;
+	int ghost_num;
 	int gameStatus;
 } game_t;
+
+
+void gameInit(game_t *myGame, int num);
+
 /**
  * \brief Ta funkcja przesuwaja sie potworki
  *
@@ -103,6 +110,8 @@ int consumeAndSwap(int *miejsce1, int *miejsce2);
 index_t getAnIndexPositionOf(int value, int board[BSIZE_HEIGHT][BSIZE_WIDTH]);
 
 
+bool ghostsMarioCollision(index_t p, game_t *gm);
+bool marioGhostsCollision(index_t p, game_t *gm);
 /**
  * \brief Wykonaj ruch Mario. Testowa implementacja. 
  *
@@ -130,7 +139,7 @@ void moveRespectingRules_new(index_t positionChangeRequest, game_t *gm);
  * \param *currentPositionOfFigure okreslenie ktorej figury dotyczy ruch
  * \param board Plansza gry. 
  */
-void moveRespectingRules(index_t positionChangeRequest, game_t *gm);
+void moveRespectingRules(index_t positionChangeRequest, game_t *gm, int gh_num);
 
 /**
  * \brief Wygeneruj losowy wykonalny ruch dla podanej figury
