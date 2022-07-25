@@ -12,6 +12,8 @@
 #define SPLAY			1
 #define SPAUSE			2
 #define SSTOP			0
+#define SINTRO			4
+#define KEYB_LEN		350
 /**
  * \file logic.h
  * \brief Zbior elementow odpowiadajacych
@@ -67,6 +69,7 @@ typedef struct game{
 	index_t	*ghostIndex;
 	int ghost_num;
 	int gameStatus;
+	int keyb[KEYB_LEN];
 } game_t;
 
 
