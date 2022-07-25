@@ -22,6 +22,15 @@ typedef struct gfx_s{
 	gfx_imgs_t myImgs;	
 } gfx_t;
 
+void gfx_initSDL(gfx_t *myGfx);
+
+
+void gfx_playIntro(game_t *myGame, gfx_t *myGfx);
+
+void gfx_showScene(SDL_Renderer *renderer);
+
+void gfx_prepareScene(game_t *myGame, gfx_t *myGfx);
+
 void gfx_intro(gfx_t *myGfx, game_t *myGame, int i);
 
 void gfx_loadImgs(gfx_t *myGfx);
@@ -36,4 +45,5 @@ void gfx_drawCircle(SDL_Renderer *renderer, int centreX, int centreY, int radius
 
 void gfx_printTheBoard(SDL_Renderer *renderer, SDL_Texture *image, int board[BSIZE_HEIGHT][BSIZE_WIDTH]);
 
-//void gfx_eventLoopPlayMode(SDL_Event *event);
+void gfx_cleanupSDL(gfx_t *myGfx);
+

@@ -70,9 +70,14 @@ typedef struct game{
 	int ghost_num;
 	int gameStatus;
 	int keyb[KEYB_LEN];
+	index_t playerMove;
 } game_t;
 
 
+
+void moveGhosts(game_t *myGame);
+
+void movePlayer(game_t *myGame);
 void gameInit(game_t *myGame, int num);
 
 /**
@@ -127,7 +132,7 @@ bool marioGhostsCollision(index_t p, game_t *gm);
  * \param positionChangeRequest intencja zmiany pozycji opisana jako koordynaty
  *	  x,y; dozwolony ruch o 1 w osi x lub y
  * \param *gm Wskaznik do struktury gry  */
-void moveRespectingRules_new(index_t positionChangeRequest, game_t *gm);
+void moveRespectingRules_new(game_t *gm);
 /**
  * \brief Wykonaj ruch. Implementacja regul gry. 
  *

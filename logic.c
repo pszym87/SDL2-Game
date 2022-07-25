@@ -2,6 +2,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <time.h>
+
+void moveGhosts(game_t *myGame){
+	srand(time(0));
+	index_t move2 = generateRandomPossibleMove(myGame->ghostIndex, myGame->board);	
+	index_t move3 = generateRandomPossibleMove(myGame->ghostIndex+1, myGame->board);
+	index_t move4 = generateRandomPossibleMove(myGame->ghostIndex+2, myGame->board);
+	moveRespectingRules(move2, myGame, 0);
+	moveRespectingRules(move3, myGame, 1);
+	moveRespectingRules(move4, myGame, 2);
+}
 
 void gameInit(game_t *myGame, int num){
 	int tmp[BSIZE_HEIGHT][BSIZE_WIDTH] = {
@@ -36,15 +47,23 @@ void gameInit(game_t *myGame, int num){
 
 	memcpy(myGame->board, tmp, sizeof (int) *BSIZE_HEIGHT * BSIZE_WIDTH);	
 
-	//myGame-> board = tmp;
-
 	myGame->marioIndex = getAnIndexPositionOf(10,myGame->board);
 	myGame->ghostIndex = malloc(sizeof(index_t)*num);
+	
 	for(int i=0; i<num; i++)
 		*(myGame->ghostIndex+i) = getAnIndexPositionOf(400+i,myGame->board);
+	
 	myGame->ghost_num = num;
 	myGame->gameStatus = SINTRO;	
 	memset(myGame->keyb, 0, KEYB_LEN);
+	myGame->playerMove = (index_t){0,0};
+}
+
+
+
+void movePlayer(game_t *myGame){
+	moveRespectingRules_new(myGame);			
+	myGame->playerMove = (index_t) {0,0};
 }
  
 int swap(int *miejsce1, int *miejsce2){
@@ -85,14 +104,14 @@ bool marioGhostsCollision(index_t p, game_t *gm){
 	return false;  
 }
 
-void moveRespectingRules_new(index_t positionChangeRequest, game_t *gm){
+void moveRespectingRules_new(game_t *gm){
 
-	if(!(positionChangeRequest.x==0 && positionChangeRequest.y==0)){
+	if(!(gm->playerMove.x==0 && gm->playerMove.y==0)){
 		// Zmienia tablice w poniekad liste cykliczna
 		// Pozwala to na wykonanie skokow figury z ostatniego indeksu do pierwszego i na odwrot
 
-		int newPositionX = (gm->marioIndex.x + positionChangeRequest.x);
-		int newPositionY = (gm->marioIndex.y + positionChangeRequest.y);
+		int newPositionX = (gm->marioIndex.x + gm->playerMove.x);
+		int newPositionY = (gm->marioIndex.y + gm->playerMove.y);
 		
 		if(newPositionY < 0) newPositionY = BSIZE_HEIGHT-1;
 		if(newPositionX < 0) newPositionX = BSIZE_WIDTH-1;
@@ -113,7 +132,7 @@ void moveRespectingRules_new(index_t positionChangeRequest, game_t *gm){
 
 			else{
 				//zamien pozycjami pacmana z "nagroda"
-				printf("** ruch mario o x=%d y=%d **", positionChangeRequest.x, positionChangeRequest.y);
+				printf("** ruch mario o x=%d y=%d **", gm->playerMove.x, gm->playerMove.y);
 				int prize = consumeAndSwap(&gm->board[gm->marioIndex.y][gm->marioIndex.x],
 					       &gm->board[newPositionY][newPositionX]);
 				//if(prize>400)

@@ -1,33 +1,66 @@
 #include "gfx.h"
 
+void gfx_initSDL(gfx_t *myGfx){
+
+	myGfx->window=NULL;
+	if(SDL_Init(SDL_INIT_VIDEO) < 0){
+		printf("SDL could not be initialized\n");
+	SDL_GetError();
+	}else{
+		printf("SDL video system is ready to go\n");
+	}
+
+	TTF_Init();
+
+	myGfx->window = SDL_CreateWindow("C SDL2 Window",20, 20, WIN_W,WIN_H,SDL_WINDOW_SHOWN);
+	myGfx->renderer = NULL;
+	myGfx->renderer = SDL_CreateRenderer(myGfx->window,-1,SDL_RENDERER_ACCELERATED);
+
+	gfx_loadImgs(myGfx);
+	
+}
+
+void gfx_playIntro(game_t *myGame, gfx_t *myGfx){
+	for(int i=3; i>0; i--){
+		gfx_prepareScene(myGame, myGfx);	
+		gfx_intro(myGfx, myGame,i);
+		gfx_showScene(myGfx->renderer);
+		SDL_Delay(1000);
+	}
+}
+
+void gfx_showScene(SDL_Renderer *renderer){
+	SDL_RenderPresent(renderer);
+}
+
+void gfx_prepareScene(game_t *myGame, gfx_t *myGfx){
+
+	SDL_SetRenderDrawColor(myGfx->renderer,0,0,0xFF,SDL_ALPHA_OPAQUE);	
+	SDL_RenderClear(myGfx->renderer);
+	gfx_renderMario(myGame, myGfx);
+	gfx_renderGhosts(myGame, myGfx);
+	gfx_printTheBoard(myGfx->renderer, myGfx->myImgs.img_brick, myGame->board);
+	gfx_printScore(myGfx,myGame);
+}
 
 void gfx_intro(gfx_t *myGfx, game_t *myGame, int i){
 	char c[2];
 	SDL_Delay(100);
 	sprintf(c, "%d", i);
 	TTF_Font *font = TTF_OpenFont("./fonts/8bitOperatorPlus-Regular.ttf",72);
-	//TTF_Font *our= TTF_OpenFont("/Users/pszymanski/Documents/Mario/fonts/8bitOperatorPlus-Regular.ttf", 2);
 	SDL_Surface* surfaceText = TTF_RenderText_Solid(font,c,(SDL_Color){255,255,255,0});
 		
-	// Setup the texture
 	SDL_Texture* textureText = SDL_CreateTextureFromSurface(myGfx->renderer,surfaceText);
 
 	SDL_FreeSurface(surfaceText); 
 
-	// Create a rectangle to draw on
-
 	SDL_Rect rectangle;
-
 	rectangle.x=((WIN_W-160)/2);
 	rectangle.y=((WIN_H-240)/2);
 	rectangle.w=160;
 	rectangle.h=240;
 
 	SDL_SetRenderDrawColor(myGfx->renderer,0,0,0,SDL_ALPHA_OPAQUE);
-	//SDL_RenderFillRect(myGfx->renderer, &backdrop);
-	// SDL_RenderClear(myGfx->renderer);
-
-	// Render our text on a rectangle
 	SDL_RenderCopy(myGfx->renderer,textureText,NULL,&rectangle);
 	
 }
@@ -37,16 +70,12 @@ void gfx_printScore(gfx_t *myGfx, game_t *myGame){
     	int score = myGame->board[myGame->marioIndex.y][myGame->marioIndex.x]-MARIO_VALUE;
 	sprintf(txt, "Score: %3d", score);
 	myGfx->basicFont = TTF_OpenFont("./fonts/8bitOperatorPlus-Regular.ttf",20);
-	//TTF_Font *our= TTF_OpenFont("/Users/pszymanski/Documents/Mario/fonts/8bitOperatorPlus-Regular.ttf", 2);
 	SDL_Surface* surfaceText = TTF_RenderText_Solid(myGfx->basicFont,txt,(SDL_Color){255,255,0,0});
 
-
-    	// Setup the texture
     	SDL_Texture* textureText = SDL_CreateTextureFromSurface(myGfx->renderer,surfaceText);
 
 	SDL_FreeSurface(surfaceText); 
     	
-	// Create a rectangle to draw on
     	SDL_Rect backdrop, rectangle;
     	backdrop.x = 0;
     	backdrop.y = WIN_H-SCORE_BAR_H;
@@ -60,9 +89,7 @@ void gfx_printScore(gfx_t *myGfx, game_t *myGame){
 
 	SDL_SetRenderDrawColor(myGfx->renderer,0,0,0,SDL_ALPHA_OPAQUE);
 	SDL_RenderFillRect(myGfx->renderer, &backdrop);
-	// SDL_RenderClear(myGfx->renderer);
 
-        // Render our text on a rectangle
         SDL_RenderCopy(myGfx->renderer,textureText,NULL,&rectangle);
 }
 
@@ -76,8 +103,6 @@ void gfx_renderGhosts(game_t *myGame, gfx_t *myGfx){
 		rects[i].y = myGame->ghostIndex[i].y*GFX_FIELD_SIZE;
 		rects[i].w = 30;
 		rects[i].h = 30;
-		//SDL_SetRenderDrawColor(myGfx->renderer,255,0,0,SDL_ALPHA_OPAQUE);
-		//SDL_RenderFillRect(myGfx->renderer, &rects[i]);
 		SDL_RenderCopy(myGfx->renderer, myGfx->myImgs.img_ghost, NULL, &rects[i]);
 	}
 
@@ -91,7 +116,6 @@ void gfx_renderMario(game_t *myGame, gfx_t *myGfx){
 	rect.y = myGame->marioIndex.y*GFX_FIELD_SIZE;
 	rect.w = 30;
 	rect.h = 30;
-	//SDL_SetRenderDrawColor(myGfx->renderer,255,0,0,SDL_ALPHA_OPAQUE);
 	
 	SDL_RenderCopy(myGfx->renderer, myGfx->myImgs.img_mario, NULL, &rect);
 	
@@ -121,6 +145,11 @@ void gfx_loadImgs(gfx_t *myGfx){
 	SDL_Texture *ghostPNG = SDL_CreateTextureFromSurface(myGfx->renderer, img_ghost);
 
 	myGfx->myImgs = (gfx_imgs_t){marioPNG, ghostPNG, ourPNG};
+	
+	SDL_FreeSurface(image);
+	SDL_FreeSurface(img_mario);
+	SDL_FreeSurface(img_ghost);
+	
 }
 
 void gfx_drawCircle(SDL_Renderer* renderer, int centreX, int centreY, int radius)
@@ -135,7 +164,6 @@ void gfx_drawCircle(SDL_Renderer* renderer, int centreX, int centreY, int radius
 
    while (x >= y)
    {
-      //  Each of the following renders an octant of the circle
       SDL_RenderDrawPoint(renderer, centreX + x, centreY - y);
       SDL_RenderDrawPoint(renderer, centreX + x, centreY + y);
       SDL_RenderDrawPoint(renderer, centreX - x, centreY - y);
@@ -182,9 +210,7 @@ void gfx_printTheBoard(SDL_Renderer *renderer, SDL_Texture *image, int board[BSI
 					SDL_RenderDrawPoint(renderer,j*GFX_FIELD_SIZE+GFX_FIELD_SIZE/2, (i*GFX_FIELD_SIZE+GFX_FIELD_SIZE/2)-1);
 					SDL_RenderDrawPoint(renderer,j*GFX_FIELD_SIZE+GFX_FIELD_SIZE/2, (i*GFX_FIELD_SIZE+GFX_FIELD_SIZE/2)+1);
 					SDL_RenderDrawPoint(renderer,j*GFX_FIELD_SIZE+GFX_FIELD_SIZE/2, i*GFX_FIELD_SIZE+GFX_FIELD_SIZE/2);
-					//SDL_RenderDrawPoint(renderer,j*GFX_FIELD_SIZE+GFX_FIELD_SIZE/2, i*GFX_FIELD_SIZE+GFX_FIELD_SIZE/2);
 
-					//gfx_drawCircle(renderer,j*GFX_FIELD_SIZE+GFX_FIELD_SIZE/2, i*GFX_FIELD_SIZE+GFX_FIELD_SIZE/2,1); 				
 				}
 				else if(board[i][j] == 0){
 					
@@ -193,24 +219,15 @@ void gfx_printTheBoard(SDL_Renderer *renderer, SDL_Texture *image, int board[BSI
 			
 		} 
 }
-/*
-void gfx_eventLoopPlayMode(SDL_Event *event){
-	while(SDL_PollEvent(event)){
-		    
-			if(event->key.keysym.sym == SDLK_UP){ 
-				move = MV_UP;
-			}
-			if(event->key.keysym.sym == SDLK_DOWN)
-				move = MV_DOWN;
-			if(event->key.keysym.sym == SDLK_LEFT)
-				move = MV_LEFT; 
-			if(event->key.keysym.sym == SDLK_RIGHT) 
-				move = MV_RIGHT;
-		
-	 
-		    	if(event->type == SDL_QUIT){
-				gameIsRunning= false;
-		    	}	
 
-		}
-}*/
+void gfx_cleanupSDL(gfx_t *myGfx){
+	
+	SDL_DestroyWindow(myGfx->window);
+	
+	SDL_DestroyTexture(myGfx->myImgs.img_mario);		
+	SDL_DestroyTexture(myGfx->myImgs.img_ghost);		
+	SDL_DestroyTexture(myGfx->myImgs.img_brick);		
+		
+	IMG_Quit();
+	SDL_Quit();
+}
