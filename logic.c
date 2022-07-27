@@ -3,19 +3,22 @@
 #include <string.h>
 #include <stdlib.h>
 #include <time.h>
+#include "adj.h"
 
 void moveGhosts(game_t *myGame){
 	srand(time(0));
-	index_t move2 = generateRandomPossibleMove(myGame->ghostIndex, myGame->board);	
+	//index_t move2 = generateRandomPossibleMove(myGame->ghostIndex, myGame->board);	
 	index_t move3 = generateRandomPossibleMove(myGame->ghostIndex+1, myGame->board);
 	index_t move4 = generateRandomPossibleMove(myGame->ghostIndex+2, myGame->board);
-	moveRespectingRules(move2, myGame, 0);
+	//moveRespectingRules(move2, myGame, 0);
+	moveGhostDijkstra(myGame);
 	moveRespectingRules(move3, myGame, 1);
 	moveRespectingRules(move4, myGame, 2);
 }
 
+
 void gameInit(game_t *myGame, int num){
-	int tmp[BSIZE_HEIGHT][BSIZE_WIDTH] = {
+	/*int tmp[BSIZE_HEIGHT][BSIZE_WIDTH] = {
 	{ -1,  1, 10,  1,  1, -1, -1,  1, -1,  1, -1, -1,  1,  1, -1,  1,  1, -1},
 	{ -1,  1, -1,  1,  1, -1,  1,  1,  1,  1, -1, -1,  1,  1, -1,  1,  1, -1},
 	{ -1 , 1, -1,  1,  1, -1,  1,  1,  1,  1, -1, -1,  1,  1, -1,  -1,  1, -1},
@@ -43,8 +46,37 @@ void gameInit(game_t *myGame, int num){
 	{ -1 , -1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1},
 	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1},
 	{ -1 ,  1 , -1 , -1 , -1 ,  -1,  1 ,1, -1, 1, -1, -1, 1, 1, -1, 1, 1, -1}
-	};
+	};*/
 
+	int tmp[BSIZE_HEIGHT][BSIZE_WIDTH] = {
+	{ -1,  1, 10,  1,  1, -1, -1,  1, -1,  1, -1, -1,  1,  400, -1,  1,  1, -1},
+	{ -1,  1, -1,  1,  1, -1,  1,  1,  1,  1, -1, -1,  1,  1, -1,  1,  1, -1},
+	{ -1 , 1, -1,  1,  1, -1,  1,  1,  1,  1, -1, -1,  1,  1, -1,  -1,  1, -1},
+	{  1,  1,  1,  1,  1, -1,  1,  1,  1,  1, -1, -1,  1,  1, -1,  1,  1, -1},
+	{ -1,  1,  1,  1,  1, -1, -1, -1,  1,  1,  1,  1,  1,  1,  1,  1,  1, -1},
+	{  1,  1 , 1 ,  1 , 1 ,  -1, -1 , -1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{  1 , -1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, -1, -1, -1, 1, 1, -1, 1, 1, 1},
+	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 ,  -1, -1, -1, 1, -1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, 1},
+	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, -1, -1, -1, 1, 1,  1, -1, -1, 1},
+	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1,  1, 1,  -1, -1},
+	{ -1 ,  1 ,  1 ,  1 , 1 ,   1,  1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, -1, -1},
+	{ -1 ,  1 , -1 ,  1 , -1 ,  -1, -1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 ,  -1, -1 ,1, 1, 1,  1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , -1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, -1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 ,  -1, -1, -1 , -1, 1, -1, -1, 1, 1, -1, 4, 1, -1},
+	{ -1 ,  1 , -1 ,  -1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1,  1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1,  1, 1, 1, -1},
+	{  1 ,  1 ,  1 ,  1 , 1, -1,  1 ,1, 1, 1, -1, -1, 1, 402, -1, 1, 1, 1},
+	{ -1 , -1 , -1 ,  1 , 1 ,  -1,  1 , -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
+	{  1 ,  1 , -1 ,  1 , 1 ,  -1, -1 ,-1, 1, -1, -1, -1, 1,  1, -1, 1, 1,  1},
+	{ -1 , -1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1},
+	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 401, 1, -1, -1, 1, 1, 1, 1, 1, -1},
+	{ -1 ,  1 , -1 , -1 , -1 ,  -1,  1 ,1, -1, 1, -1, -1, 1, 1, -1, 1, 1, -1}
+	};
 	memcpy(myGame->board, tmp, sizeof (int) *BSIZE_HEIGHT * BSIZE_WIDTH);	
 
 	myGame->marioIndex = getAnIndexPositionOf(10,myGame->board);
@@ -57,9 +89,32 @@ void gameInit(game_t *myGame, int num){
 	myGame->gameStatus = SINTRO;	
 	memset(myGame->keyb, 0, KEYB_LEN);
 	myGame->playerMove = (index_t){0,0};
+
+	generateAdjMatrix(myGame->board,myGame->adj);
 }
+void moveGhostDijkstra(game_t *myGame){
 
-
+	//int adj[BSIZE_HEIGHT*BSIZE_WIDTH][BSIZE_HEIGHT*BSIZE_WIDTH];
+	int prev[BSIZE_HEIGHT*BSIZE_WIDTH];
+	//generateAdjMatrix(myGame->board,adj);
+	int root = getVertex(myGame->marioIndex.y, myGame->marioIndex.x); 	
+	dijkstra(myGame->adj, root, prev); 
+	int ghost = getVertex(myGame->ghostIndex->y, myGame->ghostIndex->x);
+	int ghost_prev = prev[ghost];
+	
+	index_t coordinate = getBoardIndex(ghost_prev);
+	
+	if( marioGhostsCollision(coordinate,myGame) ){
+			myGame->gameStatus = SSTOP;
+	}
+	else{	
+	swap(&myGame->board[myGame->ghostIndex->y][myGame->ghostIndex->x],
+			 &myGame->board[coordinate.y][coordinate.x]);
+	*myGame->ghostIndex = coordinate;		
+	};
+		
+		
+}
 
 void movePlayer(game_t *myGame){
 	moveRespectingRules_new(myGame);			

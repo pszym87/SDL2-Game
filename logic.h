@@ -71,10 +71,12 @@ typedef struct game{
 	int gameStatus;
 	int keyb[KEYB_LEN];
 	index_t playerMove;
+	int adj[BSIZE_HEIGHT*BSIZE_WIDTH][BSIZE_HEIGHT*BSIZE_WIDTH];
 } game_t;
 
 
 
+void moveGhostDijkstra(game_t *myGame);
 void moveGhosts(game_t *myGame);
 
 void movePlayer(game_t *myGame);
