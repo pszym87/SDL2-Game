@@ -238,69 +238,60 @@ void moveRespectingRules(index_t positionChangeRequest, game_t *gm, int gh_num){
 }
 
 index_t generateRandomPossibleMove(index_t *currentPositionOfFigure,int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
-	// lista
-	struct lista{
-		index_t position;
-		struct lista *l;
-	};
 
-	int ileMozliwych = 0;
+	// counter of permissible moves
+	int count_perm = 0;
 
-	index_t array[4] = {MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT};
+	index_t mv_arr[4] = {MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT};
 	
-	// ustaw wartownik listy	
-	struct lista *head,*ptr_element;
-	head = malloc(sizeof(struct lista));
-	head->l = NULL;	
-	
-	ptr_element = head;
-	// przejdz po elementach i zapisz w liscie wszystkie mozliwe
-	// do wykonania ruchy
-	for(int i=0; i<4; i++){
+	// setting up lists
+	// -- 'current_node' is used for traversing through the list	
+	mv_list_t *head, *current_node;
+	head = malloc(sizeof(mv_list_t));
+	head->next = NULL;	
+	current_node = head;
+
+	// generate a list of all permissible moves for a given position
+	for(int i=0; i<sizeof mv_arr/sizeof(index_t); i++){
 		 
-		// sprawdza i-ty ruch z tablicy jest 
-		// mozliwy do wykonania w obecnym stanie planszy
-		if(czyMozliwy(array[i], currentPositionOfFigure, board)){
-			struct lista *temp = malloc(sizeof(struct lista));
-			temp->position = array[i];
-			temp->l =  NULL;
-			ptr_element->l = temp;
-			++ileMozliwych;
-			ptr_element = temp;
-			printf("Znalazlem mozliwosc x=%d y=%d\n", temp->position.x, temp->position.y);
+		if(czyMozliwy(mv_arr[i], currentPositionOfFigure, board)){
+			
+			++count_perm;
+			
+			// assign the move to the list 
+			mv_list_t *new_node = malloc(sizeof(mv_list_t));
+			new_node->position = mv_arr[i];
+			new_node->next = NULL;
+			current_node->next = new_node;
+
+			// sets up a new node as a current node
+			current_node = new_node;
+
 		} 
 	}	
 	
-	// wylosuj, ktory z dostepnych ruchow zagrac
-	int los = rand() % ileMozliwych; 
-	printf("Wylosowano %d\n", los);
-	++los;
-
-	// przejdz po liscie aby wybrac wylosowany ruch
-	ptr_element = head;
-	while(los>0){
-		
-		printf("ptr_element: x=%d y=%d\n", ptr_element->l->position.x, ptr_element->l->position.y);
-		ptr_element = ptr_element->l;
-		--los;
+	// draw a move from the list 
+	int drawn_mv_indx = rand() % count_perm+1;
+	// pick up the move from the list
+	current_node = head;
+	while(drawn_mv_indx>0){
+		current_node = current_node->next;
+		--drawn_mv_indx;
 	}
 
-	// zwolnij zaalokowna pamiec	
-	index_t ret = ptr_element->position;
+	// returned value stored here
+	index_t ret = current_node->position;
+
+	// memory cleanup
 	int i=0;	
-	ptr_element = head;	
-	while(ptr_element != NULL){
-		printf("Iteracja #%d\n", i);
-		struct lista *tmp = ptr_element;
-		ptr_element = ptr_element->l;
-		printf("Zwalniam: x=%d, y=%d", tmp->position.x, tmp->position.y);
-		free(tmp);
-		printf("\t Zwolniono\n");
+	current_node = head;	
+	while(current_node != NULL){
+		mv_list_t *to_release = current_node;
+		current_node = current_node->next;
+		free(to_release);
 		i++;
 	}
 
-		
-	printf("Zaproponuje ruch x= %d, y=%d\n", ret.x, ret.y);
 	return ret;
 
 }	

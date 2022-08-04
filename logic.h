@@ -63,6 +63,19 @@ typedef struct index{
 	int x;
 } index_t;
 
+
+
+/** \typedef mv_list_t
+ *  
+ * \brief Linked list of moves
+ */
+typedef struct mv_list_s mv_list_t;
+
+struct mv_list_s{
+	index_t position;
+	mv_list_t *next;
+};
+
 typedef struct game{
 	int board[BSIZE_HEIGHT][BSIZE_WIDTH];
 	index_t marioIndex;
@@ -151,12 +164,12 @@ void moveRespectingRules_new(game_t *gm);
  */
 void moveRespectingRules(index_t positionChangeRequest, game_t *gm, int gh_num);
 
-/**
- * \brief Wygeneruj losowy wykonalny ruch dla podanej figury
+/** \fn generateRandomPossibleMove
+ * \brief Drawes a random but permissible move for a given position
  *
- * \param *currentPositionOfFigure biezaca pozycja figury
- * \param board Plansza ze stanem gry
- * \return Zwraca losowy ruch jako przemieszczenie wzgledne wyrazone wskaznikiem do index_t
+ * \param *currentPositionOfFigure given position
+ * \param board board of the game
+ * \return drawn move for the figure
  */
 
 index_t generateRandomPossibleMove(index_t *currentPositionOfFigure, int board[BSIZE_HEIGHT][BSIZE_WIDTH]);
