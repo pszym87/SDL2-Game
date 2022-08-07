@@ -7,11 +7,10 @@
 
 void moveGhosts(game_t *myGame){
 	srand(time(0));
-	//index_t move2 = generateRandomPossibleMove(myGame->ghostIndex, myGame->board);	
 	index_t move3 = generateRandomPossibleMove(myGame->ghostIndex+1, myGame->board);
-	index_t move4 = generateRandomPossibleMove(myGame->ghostIndex+2, myGame->board);
-	//moveRespectingRules(move2, myGame, 0);
+	index_t move4 = genRandFwd(*(myGame->ghostIndex+2), myGame->adj); 
 	moveGhostDijkstra(myGame);
+
 	moveRespectingRules(move3, myGame, 1);
 	moveRespectingRules(move4, myGame, 2);
 }
@@ -291,10 +290,48 @@ index_t generateRandomPossibleMove(index_t *currentPositionOfFigure,int board[BS
 		free(to_release);
 		i++;
 	}
-
 	return ret;
 
 }	
+
+
+index_t genRandFwd(index_t curr_pos, int graph[BSIZE_HEIGHT*BSIZE_WIDTH][BSIZE_HEIGHT*BSIZE_WIDTH]){
+	
+	static int rec_visited = -1;	
+	int size = BSIZE_HEIGHT*BSIZE_WIDTH;
+ 
+	// translate matrix position to graph node index
+	int curr_vrtx = getVertex(curr_pos.y, curr_pos.x); 	
+
+	queue_t *neighb_q = create_queue();	
+	int q_size = 0;
+
+	// add all adjacent vertexex to the queue
+	for(int i=0; i<size; i++)
+		if(graph[curr_vrtx][i] == 1 && i!=rec_visited){
+			push_q(neighb_q, i);
+			++q_size;
+		}
+
+	// allow backward move if other option aren't avaiable
+	if(q_size==0) push_q(neighb_q, rec_visited), ++q_size;
+		
+	// draw a vertex from the queue
+	int drawn_q_indx = rand()%q_size+1;
+	
+	// get a vertex
+	int drawn_vrtx = get_queue_item(neighb_q, drawn_q_indx);
+	
+	int p_rec_visited = rec_visited; // temporary, for debugging
+	rec_visited = curr_vrtx;
+	
+	// translate it to the relative coordinates
+	index_t	ret = getBoardIndex(drawn_vrtx);
+	ret.x = ret.x-curr_pos.x;
+	ret.y = ret.y-curr_pos.y;
+
+	return ret;
+}
 
 int czyMozliwy(index_t positionChangeRequest, index_t *currentPositionOfFigure, int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
 	int newPositionX = (currentPositionOfFigure->x + positionChangeRequest.x);

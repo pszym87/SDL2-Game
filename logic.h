@@ -92,6 +92,20 @@ typedef struct game{
 void moveGhostDijkstra(game_t *myGame);
 void moveGhosts(game_t *myGame);
 
+/* \fn genRandFwd()
+ * \brief Random move forward(no returns to the previous position)
+ * Random move with the following algoritm
+ * 1. Queue all adjacent nodes of the current node (exclude recently visited nodes)
+ * 2. If there are no adjacent nodes not recently visited, add previously visited node to the queue 
+ * 3. Draw a move from the queue
+ * 4. Set current move as recently visited
+ * 
+ * \param curr_pos Current position of the figure
+ * \param graph The adjacency matrix of the graph that represents a game map
+ * \return Move for the figure (expressed as relative index position)
+ */
+index_t genRandFwd(index_t curr_pos, int graph[BSIZE_HEIGHT*BSIZE_WIDTH][BSIZE_HEIGHT*BSIZE_WIDTH]);
+
 void movePlayer(game_t *myGame);
 void gameInit(game_t *myGame, int num);
 

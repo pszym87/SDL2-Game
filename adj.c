@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <limits.h>
 #include "adj.h"
+#include <stdlib.h>
 
 #pragma once
 
@@ -131,5 +132,106 @@ void printMatrix(int adj[BSIZE_HEIGHT*BSIZE_WIDTH][BSIZE_HEIGHT*BSIZE_WIDTH], in
 			printf("%d\t", adj[i][j]);	
 		}
 	printf("\n");
+	}
+}
+
+
+/**
+ * \brief Create a queue and return its pointer to the head
+ */
+
+queue_t* create_queue(){	
+	queue_t *queue_head = malloc(sizeof(queue_t)); 
+	queue_head->value = QUEUE_HEAD;
+	queue_head->next = NULL;
+	
+	return queue_head;
+}
+
+/**
+ * \brief Push to the queue
+ * Add new item to the end of the queue
+ */
+void push_q(queue_t *queue_front, int value){
+	
+	// create a new item
+	queue_t *new_item = malloc(sizeof(queue_t));
+	new_item->next = NULL;
+	new_item->value = value;
+		
+	// find last item in the queue
+	queue_t *curr_item = queue_front;
+	while(curr_item->next != NULL) curr_item=curr_item->next;
+
+	
+	// append
+	curr_item->next = new_item;
+}
+
+/** 
+ * \brief Pop the queue
+ * Access the front element of the queue. Read its value and set the next iteam as front.
+ * 
+ */
+int pop_q(queue_t **queue_head){
+	
+	if((*queue_head)->next == NULL) return (*queue_head)->value;
+	else{
+		queue_t *queue_front = (*queue_head)->next;
+		int ret = queue_front->value;
+		
+		queue_t* to_release = queue_front;
+		(*queue_head)->next = queue_front->next;
+		
+		free(to_release);
+		return ret;
+	}
+}
+
+/**
+ * \brief Check if the queue is empty. Empty queue contains only a head. 
+ *
+ */
+bool is_empty(queue_t *queue){
+	if(queue->value == QUEUE_HEAD && queue->next == NULL) return true;
+	else return false;
+}
+
+/**
+ * \brief Print contents of queue to stdout
+ * 
+ */
+void print_queue(queue_t *queue_front){
+	queue_t *curr_item = queue_front->next;
+
+	while(curr_item != NULL){
+		 printf("Item: %d\n", curr_item->value);
+		 curr_item=curr_item->next;
+	}
+}
+
+
+/** 
+ * \brief Access a queue item by index position (equivalent to a[i] in arrays)
+ * 
+ * \return value stored in a queue at position queue[searched_indx]
+ * \retval -1 queue is empty
+ * \retval -2 searched_indx exceeds queue size
+ */
+int get_queue_item(queue_t *queue, int searched_indx){
+
+	// if queue is empty 
+	if(is_empty(queue)) return -1;
+	else{
+		// travese to the searched_indx
+		int i=0;
+		queue_t *curr_q_itm = queue;
+		while(i<searched_indx && curr_q_itm != NULL){
+			++i;
+			curr_q_itm = curr_q_itm->next;
+		}
+
+		if(curr_q_itm != NULL) return curr_q_itm->value;
+		else return -2;
 	}
 }
