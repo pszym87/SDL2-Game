@@ -24,7 +24,6 @@ typedef struct gfx_s{
 
 void gfx_initSDL(gfx_t *myGfx);
 
-
 void gfx_playIntro(game_t *myGame, gfx_t *myGfx);
 
 void gfx_showScene(SDL_Renderer *renderer);

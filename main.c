@@ -11,28 +11,34 @@ clang main.c logic.c gfx.c diagnostics.c ctrl.c adj.c -L/opt/homebrew/lib -lSDL2
 
 int main(){
  	
-
+	// init a game
 	game_t myGame;
 	gfx_t myGfx;
 
 	gameInit(&myGame, 3);	
 	gfx_initSDL(&myGfx);	
 
+	// game loop
 	while(1){
+		
+		// intercept keyboard events and propagate them to
+		// the main structure of the game
 		processEvents(&myGame);	
 		
+
+		// 3.. 2.. 1.. START!
 		if(myGame.gameStatus == SINTRO){	
 			gfx_playIntro(&myGame, &myGfx);
 			myGame.gameStatus = SPLAY;
 		}
 		
+		// Actual game
 		else if(myGame.gameStatus == SPLAY){
 		
 			moveGhosts(&myGame);
 			processPlayModeInput(&myGame);
 			movePlayer(&myGame);			
 
-			printTheBoard(myGame.board);
 			gfx_prepareScene(&myGame, &myGfx);	
 			gfx_showScene(myGfx.renderer);
 

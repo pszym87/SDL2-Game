@@ -1,3 +1,4 @@
+#pragma once
 #include "logic.h"
 
 #define QUEUE_HEAD -1

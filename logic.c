@@ -17,36 +17,6 @@ void moveGhosts(game_t *myGame){
 
 
 void gameInit(game_t *myGame, int num){
-	/*int tmp[BSIZE_HEIGHT][BSIZE_WIDTH] = {
-	{ -1,  1, 10,  1,  1, -1, -1,  1, -1,  1, -1, -1,  1,  1, -1,  1,  1, -1},
-	{ -1,  1, -1,  1,  1, -1,  1,  1,  1,  1, -1, -1,  1,  1, -1,  1,  1, -1},
-	{ -1 , 1, -1,  1,  1, -1,  1,  1,  1,  1, -1, -1,  1,  1, -1,  -1,  1, -1},
-	{  1,  1,  1,  1,  1, -1,  1,  1,  1,  1, -1, -1,  1,  1, -1,  1,  1, -1},
-	{ -1,  1,  1,  1,  1, -1, -1, -1,  1,  1,  1,  1,  1,  1,  1,  1,  1, -1},
-	{401,  1 , 1 ,  1 , 1 ,  -1, -1 , -1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{  1 , -1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, -1, -1, -1, 1, 1, -1, 1, 1, 1},
-	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 ,  -1, -1, -1, 1, -1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, 1},
-	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, -1, -1, -1, 1, 1,  1, -1, -1, 1},
-	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1,  1, 1,  -1, -1},
-	{ -1 ,  1 ,  1 ,  1 , 1 ,   1,  1 ,1, 400, 1, -1, -1, 1, 1, -1, 1, -1, -1},
-	{ -1 ,  1 , -1 ,  1 , -1 ,  -1, -1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 ,  -1, -1 ,1, 1, 1,  1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , -1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, -1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 ,  -1, -1, -1 , -1, 1, -1, -1, 1, 1, -1, 4, 1, -1},
-	{ -1 ,  1 , -1 ,  -1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1,  1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1,  1, 1, 1, -1},
-	{  1 ,  1 ,  1 ,  1 , 1, -1,  1 ,1, 1, 1, -1, -1, 1, 402, -1, 1, 1, 1},
-	{ -1 , -1 , -1 ,  1 , 1 ,  -1,  1 , -1, -1, 1, -1, -1, -1, -1, -1, -1, -1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1, -1, 1, 1, -1},
-	{  1 ,  1 , -1 ,  1 , 1 ,  -1, -1 ,-1, 1, -1, -1, -1, 1,  1, -1, 1, 1,  1},
-	{ -1 , -1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1},
-	{ -1 ,  1 , -1 ,  1 , 1 ,  -1,  1 ,1, 1, 1, -1, -1, 1, 1, 1, 1, 1, -1},
-	{ -1 ,  1 , -1 , -1 , -1 ,  -1,  1 ,1, -1, 1, -1, -1, 1, 1, -1, 1, 1, -1}
-	};*/
-
 	int tmp[BSIZE_HEIGHT][BSIZE_WIDTH] = {
 	{ -1,  1, 10,  1,  1, -1, -1,  1, -1,  1, -1, -1,  1,  400, -1,  1,  1, -1},
 	{ -1,  1, -1,  1,  1, -1,  1,  1,  1,  1, -1, -1,  1,  1, -1,  1,  1, -1},
@@ -93,9 +63,7 @@ void gameInit(game_t *myGame, int num){
 }
 void moveGhostDijkstra(game_t *myGame){
 
-	//int adj[BSIZE_HEIGHT*BSIZE_WIDTH][BSIZE_HEIGHT*BSIZE_WIDTH];
 	int prev[BSIZE_HEIGHT*BSIZE_WIDTH];
-	//generateAdjMatrix(myGame->board,adj);
 	int root = getVertex(myGame->marioIndex.y, myGame->marioIndex.x); 	
 	dijkstra(myGame->adj, root, prev); 
 	int ghost = getVertex(myGame->ghostIndex->y, myGame->ghostIndex->x);
@@ -144,6 +112,9 @@ index_t getAnIndexPositionOf(int value, int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
 		for(int j=0; j<BSIZE_WIDTH; j++)
 			if(value == board[i][j])
 				return (index_t){i,j};  					
+	
+	//otherwise return erroreous value
+	return (index_t){-1,-1};
 }
 
 bool ghostsMarioCollision(index_t p, game_t *gm){
@@ -173,7 +144,6 @@ void moveRespectingRules_new(game_t *gm){
 		if(newPositionY > BSIZE_HEIGHT-1) newPositionY = 0;
 		if(newPositionX > BSIZE_WIDTH-1) newPositionX = 0; 
 
-		printf("\nRequest dla pozycji:y=%d x=%d", newPositionY, newPositionX);
 		// sprawdza czy ruch jest mozliwy do wykonania na boardzie (czy nie ma sciany)
 		if(gm->board[newPositionY][newPositionX]==-1){
 			// do nothing
@@ -186,14 +156,9 @@ void moveRespectingRules_new(game_t *gm){
 
 			else{
 				//zamien pozycjami pacmana z "nagroda"
-				printf("** ruch mario o x=%d y=%d **", gm->playerMove.x, gm->playerMove.y);
 				int prize = consumeAndSwap(&gm->board[gm->marioIndex.y][gm->marioIndex.x],
 					       &gm->board[newPositionY][newPositionX]);
-				//if(prize>400)
-				//	printf("\nYOU KINDA LOOSE\n");
-				//	gm->gameStatus = SSTOP;
 					
-
 			//zaktualizuj koordynaty figury 
 			gm->marioIndex.x = newPositionX;
 			gm->marioIndex.y = newPositionY;
@@ -217,16 +182,13 @@ void moveRespectingRules(index_t positionChangeRequest, game_t *gm, int gh_num){
 	if(newPositionY > BSIZE_HEIGHT-1) newPositionY = 0;
 	if(newPositionX > BSIZE_WIDTH-1) newPositionX = 0; 
 
-	printf("\nRequest dla pozycji:y=%d x=%d", newPositionY, newPositionX);
 	// sprawdza czy ruch jest mozliwy do wykonania na boardzie (czy nie ma sciany)
 	if(gm->board[newPositionY][newPositionX]==-1){
         	// do nothing
 	}else if(gm->board[newPositionY][newPositionX]>=0){				
-				//printf("You LOOSE!\n");
 		if( marioGhostsCollision((index_t){newPositionY, newPositionX},gm) ){
 				gm->gameStatus = SSTOP;
 		}else{
-		printf("** ruch potworka o x=%d y=%d **", positionChangeRequest.x, positionChangeRequest.y);
 		swap(&gm->board[gm->ghostIndex[gh_num].y][gm->ghostIndex[gh_num].x],&gm->board[newPositionY][newPositionX]);
 		gm->ghostIndex[gh_num].x = newPositionX;
 		gm->ghostIndex[gh_num].y = newPositionY;

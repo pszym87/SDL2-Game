@@ -5,8 +5,6 @@
 #include "adj.h"
 #include <stdlib.h>
 
-#pragma once
-
 /** \brief Funkcja tworzy z tablicy dwuwymiarowej (mapy gry) macierz sąsiedztwa
  *
  *	\param board[][]  [IN] plansza gry
@@ -38,7 +36,6 @@ void generateAdjMatrix(int b[BSIZE_HEIGHT][BSIZE_WIDTH], int adj[BSIZE_HEIGHT*BS
 
 	}
 
-	printMatrix(adj, n*m);
 }
 
 index_t getBoardIndex(int vertex){
@@ -117,12 +114,7 @@ void dijkstra(int graph[BSIZE_HEIGHT*BSIZE_WIDTH][BSIZE_HEIGHT*BSIZE_WIDTH], int
                 dist[v] = dist[u] + graph[u][v], prev[v]=u;
     }
   
-    // print the constructed distance array
-    printSolution(dist);
     
-	for(int i=0; i<BSIZE_HEIGHT*BSIZE_WIDTH; i++){
-		printf("prev[%d] = %d\n", i, prev[i]);
-	}
 }	
 
 void printMatrix(int adj[BSIZE_HEIGHT*BSIZE_WIDTH][BSIZE_HEIGHT*BSIZE_WIDTH], int size){
