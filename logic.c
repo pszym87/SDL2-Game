@@ -5,14 +5,23 @@
 #include <time.h>
 #include "adj.h"
 
-void moveGhosts(game_t *myGame){
+void* genMovesForGhosts(void *arg){
 	srand(time(0));
-	index_t move3 = generateRandomPossibleMove(myGame->ghostIndex+1, myGame->board);
-	index_t move4 = genRandFwd(*(myGame->ghostIndex+2), myGame->adj); 
-	moveGhostDijkstra(myGame);
+	
+	game_t *myGame = (game_t*)arg;
 
-	moveRespectingRules(move3, myGame, 1);
-	moveRespectingRules(move4, myGame, 2);
+	myGame->ghostNextMove[1] = generateRandomPossibleMove(myGame->ghostIndex+1, myGame->board);
+	myGame->ghostNextMove[2] = genRandFwd(*(myGame->ghostIndex+2), myGame->adj); 
+	myGame->ghostNextMove[0] = genDij(myGame);
+	
+	return NULL;
+}
+
+void moveGhosts(game_t *myGame){
+
+	moveRespectingRules(myGame->ghostNextMove[1], myGame, 1);
+	moveRespectingRules(myGame->ghostNextMove[2], myGame, 2);
+	moveRespectingRules(myGame->ghostNextMove[0], myGame, 0);
 }
 
 
@@ -58,28 +67,37 @@ void gameInit(game_t *myGame, int num){
 	myGame->gameStatus = SINTRO;	
 	memset(myGame->keyb, 0, KEYB_LEN);
 	myGame->playerMove = (index_t){0,0};
-
+	
+	for(int i=0; i<myGame->ghost_num; i++)
+		myGame->ghostNextMove[i] = (index_t){0,0};
+	
 	generateAdjMatrix(myGame->board,myGame->adj);
 }
-void moveGhostDijkstra(game_t *myGame){
 
-	int prev[BSIZE_HEIGHT*BSIZE_WIDTH];
+
+index_t genDij(game_t *myGame){
+	// an auxiliary array will store predecessors for each node in the shortest path
+	int prev[BSIZE_HEIGHT*BSIZE_WIDTH];  
+
+	// find Mario in the graph
 	int root = getVertex(myGame->marioIndex.y, myGame->marioIndex.x); 	
+	
+	// find the shortest path between the Mario's node and every other node in the graph
 	dijkstra(myGame->adj, root, prev); 
+
+	// find the ghost number 1 in the graph
 	int ghost = getVertex(myGame->ghostIndex->y, myGame->ghostIndex->x);
+	
+	// by reading the predecessor of the ghost node, the next move of the ghost is determined 
 	int ghost_prev = prev[ghost];
 	
-	index_t coordinate = getBoardIndex(ghost_prev);
+	// translate the graph node into matrix representation
+	index_t new_coords = getBoardIndex(ghost_prev);
 	
-	if( marioGhostsCollision(coordinate,myGame) ){
-			myGame->gameStatus = SSTOP;
-	}
-	else{	
-	swap(&myGame->board[myGame->ghostIndex->y][myGame->ghostIndex->x],
-			 &myGame->board[coordinate.y][coordinate.x]);
-	*myGame->ghostIndex = coordinate;		
-	};
-		
+	// calculate new relative position on the board
+	new_coords = (index_t) {new_coords.y - myGame->ghostIndex->y, new_coords.x - myGame->ghostIndex->x};
+
+	return new_coords;	
 		
 }
 
@@ -262,7 +280,7 @@ index_t genRandFwd(index_t curr_pos, int graph[BSIZE_HEIGHT*BSIZE_WIDTH][BSIZE_H
 	static int rec_visited = -1;	
 	int size = BSIZE_HEIGHT*BSIZE_WIDTH;
  
-	// translate matrix position to graph node index
+	// translate matrix position to the graph node index
 	int curr_vrtx = getVertex(curr_pos.y, curr_pos.x); 	
 
 	queue_t *neighb_q = create_queue();	
@@ -275,7 +293,7 @@ index_t genRandFwd(index_t curr_pos, int graph[BSIZE_HEIGHT*BSIZE_WIDTH][BSIZE_H
 			++q_size;
 		}
 
-	// allow backward move if other option aren't avaiable
+	// allow a backward move if other options aren't available
 	if(q_size==0) push_q(neighb_q, rec_visited), ++q_size;
 		
 	// draw a vertex from the queue

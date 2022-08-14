@@ -8,6 +8,7 @@ clang main.c logic.c gfx.c diagnostics.c ctrl.c adj.c -L/opt/homebrew/lib -lSDL2
 #include "gfx.h"
 #include "diagnostics.h"
 #include "ctrl.h"
+#include <pthread.h>
 
 int main(){
  	
@@ -15,7 +16,7 @@ int main(){
 	game_t myGame;
 	gfx_t myGfx;
 
-	gameInit(&myGame, 3);	
+	gameInit(&myGame, NGHOSTS);	
 	gfx_initSDL(&myGfx);	
 
 	// game loop
@@ -34,15 +35,28 @@ int main(){
 		
 		// Actual game
 		else if(myGame.gameStatus == SPLAY){
-		
+			
+			// apply previously generated moves into the board
 			moveGhosts(&myGame);
+
+			// player's move
 			processPlayModeInput(&myGame);
 			movePlayer(&myGame);			
 
+			// render a scene
 			gfx_prepareScene(&myGame, &myGfx);	
 			gfx_showScene(myGfx.renderer);
 
+			// The main "thread" waits 90 ms
+			// In order to save time (and maintain FPS),
+			// calculate next moves of the figures in a separate thread  
+			pthread_t genMvTh;
+			pthread_create(&genMvTh, NULL, genMovesForGhosts, &myGame);
+
 			SDL_Delay(90);
+
+			pthread_join(genMvTh, NULL);
+
 
 		}else if(myGame.gameStatus == SSTOP){	
 

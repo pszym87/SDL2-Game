@@ -14,6 +14,7 @@
 #define SSTOP			0
 #define SINTRO			4
 #define KEYB_LEN		350
+#define NGHOSTS			3
 /**
  * \file logic.h
  * \brief Zbior elementow odpowiadajacych
@@ -75,21 +76,42 @@ struct mv_list_s{
 	index_t position;
 	mv_list_t *next;
 };
-
+/**
+ * \brief The main structure of a game. 
+ */
 typedef struct game{
-	int board[BSIZE_HEIGHT][BSIZE_WIDTH];
-	index_t marioIndex;
-	index_t	*ghostIndex;
+	int board[BSIZE_HEIGHT][BSIZE_WIDTH]; /** The map represented as a 2D matrix. Holds information about points for each field.  */
+	index_t marioIndex;		/**< Store a current position of Mario */
+	index_t	*ghostIndex;		/**< Stores a current position of each ghost */
+	index_t ghostNextMove[NGHOSTS]; /**< Stores a next move for each ghost*/
 	int ghost_num;
 	int gameStatus;
 	int keyb[KEYB_LEN];
 	index_t playerMove;
-	int adj[BSIZE_HEIGHT*BSIZE_WIDTH][BSIZE_HEIGHT*BSIZE_WIDTH];
+	int adj[BSIZE_HEIGHT*BSIZE_WIDTH][BSIZE_HEIGHT*BSIZE_WIDTH]; /** The map as an adjacency matrix. It shows only routes and hides the rest information */
 } game_t;
 
+/** \brief Generates moves for ghosts. 
+ * 
+ * A standarization of the function was needed in order to use pthread. Thus the function returns a void pointer and takes a void pointer as
+ * an argument. The new move is not applied to the map it is stored in the game_t structure in the array 'ghostNextMove()'.
+ * Use the moveGhosts() function to write a move into the map. 
+ * 
+ * \param arg Pass a pointer to the game_t structure here 
+ *
+ */
+void* genMovesForGhosts(void *arg);
 
+/** \brief Generates a move for the ghost number 1 using the Dijkstra algorithm. Move isn't written into the map.
+ * 
+ * \param myGame
+ * \return Coordinates that are relative to the previous position of the ghost.  
+ */
+index_t genDij(game_t *myGame);
 
-void moveGhostDijkstra(game_t *myGame);
+/** 
+ * \brief Writes moves stored in the 'ghostNextMove' array into the map. 
+ */
 void moveGhosts(game_t *myGame);
 
 /* \fn genRandFwd()
