@@ -43,15 +43,15 @@ int main(){
 			processPlayModeInput(&myGame);
 			movePlayer(&myGame);			
 
-			// render a scene
-			gfx_prepareScene(&myGame, &myGfx);	
-			gfx_showScene(myGfx.renderer);
-
-			// The main "thread" waits 90 ms
+			// The main "thread" renders a scene
 			// In order to save time (and maintain FPS),
 			// calculate next moves of the figures in a separate thread  
 			pthread_t genMvTh;
 			pthread_create(&genMvTh, NULL, genMovesForGhosts, &myGame);
+			
+			// render a scene
+			gfx_prepareScene(&myGame, &myGfx);	
+			gfx_showScene(myGfx.renderer);
 
 			SDL_Delay(90);
 
