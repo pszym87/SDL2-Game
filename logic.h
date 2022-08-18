@@ -15,6 +15,9 @@
 #define SINTRO			4
 #define KEYB_LEN		350
 #define NGHOSTS			3
+#define B_WALL			-1
+
+
 /**
  * \file logic.h
  * \brief Zbior elementow odpowiadajacych
@@ -183,7 +186,7 @@ bool marioGhostsCollision(index_t p, game_t *gm);
  * \param positionChangeRequest intencja zmiany pozycji opisana jako koordynaty
  *	  x,y; dozwolony ruch o 1 w osi x lub y
  * \param *gm Wskaznik do struktury gry  */
-void moveRespectingRules_new(game_t *gm);
+void execMovePlayer(game_t *gm);
 /**
  * \brief Wykonaj ruch. Implementacja regul gry. 
  *
@@ -193,12 +196,12 @@ void moveRespectingRules_new(game_t *gm);
  * Jesli ruch jest wykonany uaktualniana jest pozycja figury podana w argumencie *currentPositionOfFigure
  * oraz na planszy gry podana w argumencie board.
  * 
- * \param positionChangeRequest intencja zmiany pozycji opisana jako koordynaty
+ * \param relPosReq intencja zmiany pozycji opisana jako koordynaty
  *	  x,y; dozwolony ruch o 1 w osi x lub y
  * \param *currentPositionOfFigure okreslenie ktorej figury dotyczy ruch
  * \param board Plansza gry. 
  */
-void moveRespectingRules(index_t positionChangeRequest, game_t *gm, int gh_num);
+void execMoveGhost(index_t relPosReq, game_t *gm, int num);
 
 /** \fn generateRandomPossibleMove
  * \brief Drawes a random but permissible move for a given position
@@ -208,7 +211,7 @@ void moveRespectingRules(index_t positionChangeRequest, game_t *gm, int gh_num);
  * \return drawn move for the figure
  */
 
-index_t generateRandomPossibleMove(index_t *currentPositionOfFigure, int board[BSIZE_HEIGHT][BSIZE_WIDTH]);
+index_t genRandSilly(const index_t *currPos, int board[BSIZE_HEIGHT][BSIZE_WIDTH]);
 
 /**
  * \brief Pomocnicza funkcja sprawdzajaca czy jednostkowy 
@@ -218,6 +221,6 @@ index_t generateRandomPossibleMove(index_t *currentPositionOfFigure, int board[B
  * \board Plansza
  * \return 1 ruch mozliwy do wykonania, 0 ruch niemozliwy do wykonania
  */
-int czyMozliwy(index_t positionChangeRequest, index_t*, int board[BSIZE_HEIGHT][BSIZE_WIDTH]);
+int isPossible(index_t positionChangeRequest, const index_t*, int board[BSIZE_HEIGHT][BSIZE_WIDTH]);
 
 #endif

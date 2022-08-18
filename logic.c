@@ -10,7 +10,7 @@ void* genMovesForGhosts(void *arg){
 	
 	game_t *myGame = (game_t*)arg;
 
-	myGame->ghostNextMove[1] = generateRandomPossibleMove(myGame->ghostIndex+1, myGame->board);
+	myGame->ghostNextMove[1] = genRandSilly(myGame->ghostIndex+1, myGame->board);
 	myGame->ghostNextMove[2] = genRandFwd(*(myGame->ghostIndex+2), myGame->adj); 
 	myGame->ghostNextMove[0] = genDij(myGame);
 	
@@ -18,10 +18,9 @@ void* genMovesForGhosts(void *arg){
 }
 
 void moveGhosts(game_t *myGame){
-
-	moveRespectingRules(myGame->ghostNextMove[1], myGame, 1);
-	moveRespectingRules(myGame->ghostNextMove[2], myGame, 2);
-	moveRespectingRules(myGame->ghostNextMove[0], myGame, 0);
+	execMoveGhost(myGame->ghostNextMove[0], myGame, 0);
+	execMoveGhost(myGame->ghostNextMove[1], myGame, 1);
+	execMoveGhost(myGame->ghostNextMove[2], myGame, 2);
 }
 
 
@@ -102,7 +101,7 @@ index_t genDij(game_t *myGame){
 }
 
 void movePlayer(game_t *myGame){
-	moveRespectingRules_new(myGame);			
+	execMovePlayer(myGame);			
 	myGame->playerMove = (index_t) {0,0};
 }
  
@@ -147,81 +146,110 @@ bool marioGhostsCollision(index_t p, game_t *gm){
 	return false;  
 }
 
-void moveRespectingRules_new(game_t *gm){
+void execMovePlayer(game_t *gm){
 
+	// if someone has finished the game, exit the function
+	if(gm->gameStatus == SSTOP) return;
+
+	// (1) if the player doesn't want to change its position - do nothing
+	// (2) process any other request of position change 
 	if(!(gm->playerMove.x==0 && gm->playerMove.y==0)){
-		// Zmienia tablice w poniekad liste cykliczna
-		// Pozwala to na wykonanie skokow figury z ostatniego indeksu do pierwszego i na odwrot
 
+		// Make the move cyclical in two steps
+		// (cyclical movements allow leaping from edges)
+		
+		// First step: convert coordinates, from relative to absolute
 		int newPositionX = (gm->marioIndex.x + gm->playerMove.x);
 		int newPositionY = (gm->marioIndex.y + gm->playerMove.y);
-		
+
+		// Second step: check consecutively top, left, bottom and right edge
 		if(newPositionY < 0) newPositionY = BSIZE_HEIGHT-1;
 		if(newPositionX < 0) newPositionX = BSIZE_WIDTH-1;
-		  
 		if(newPositionY > BSIZE_HEIGHT-1) newPositionY = 0;
 		if(newPositionX > BSIZE_WIDTH-1) newPositionX = 0; 
 
-		// sprawdza czy ruch jest mozliwy do wykonania na boardzie (czy nie ma sciany)
-		if(gm->board[newPositionY][newPositionX]==-1){
-			// do nothing
+		// Check if the move is permissible
+	
+		// Moving around the walls it not possible
+		if(gm->board[newPositionY][newPositionX]==B_WALL){
+
+	        	;// ignore the move by doing nothing
+
 		}
-		if(gm->board[newPositionY][newPositionX]>=0){
+		// Any other move is permissible
+		else{
 			
+			// If there is a collision between Mario and any of ghosts - STOP THE GAME - You have lost.
 			if( ghostsMarioCollision((index_t){newPositionY, newPositionX},gm) ){
 				gm->gameStatus = SSTOP;
 			}	
 
-			else{
-				//zamien pozycjami pacmana z "nagroda"
+			else{				
+				// Apply the move to the board, if the field has a bonus, add it to Mario's score 
 				int prize = consumeAndSwap(&gm->board[gm->marioIndex.y][gm->marioIndex.x],
 					       &gm->board[newPositionY][newPositionX]);
 					
-			//zaktualizuj koordynaty figury 
+			}
+			
+			// update Mario's position in the main struct
 			gm->marioIndex.x = newPositionX;
 			gm->marioIndex.y = newPositionY;
-			}
 		}
 	}
 
 }
 
-void moveRespectingRules(index_t positionChangeRequest, game_t *gm, int gh_num){
+void execMoveGhost(index_t relPosReq, game_t *gm, int num){
 
-	// Zmienia tablice w poniekad liste cykliczna
-        // Pozwala to na wykonanie skokow figury z ostatniego indeksu do pierwszego i na odwrot
-
-        int newPositionX = (gm->ghostIndex[gh_num].x + positionChangeRequest.x);
-	int newPositionY = (gm->ghostIndex[gh_num].y + positionChangeRequest.y);
+	// if someone has finished the game, exit the function
+	if(gm->gameStatus == SSTOP) return;
 	
+	// Make the move cyclical in two steps
+	// (cyclical movements allow leaping from edges)
+
+	// First step: convert coordinates, from relative to absolute
+        int newPositionX = (gm->ghostIndex[num].x + relPosReq.x);
+	int newPositionY = (gm->ghostIndex[num].y + relPosReq.y);
+	
+	// Second step: check consecutively top, left, bottom and right edge
 	if(newPositionY < 0) newPositionY = BSIZE_HEIGHT-1;
 	if(newPositionX < 0) newPositionX = BSIZE_WIDTH-1;
-	  
 	if(newPositionY > BSIZE_HEIGHT-1) newPositionY = 0;
 	if(newPositionX > BSIZE_WIDTH-1) newPositionX = 0; 
 
-	// sprawdza czy ruch jest mozliwy do wykonania na boardzie (czy nie ma sciany)
-	if(gm->board[newPositionY][newPositionX]==-1){
-        	// do nothing
-	}else if(gm->board[newPositionY][newPositionX]>=0){				
+	// Check if the move is permissible
+
+	// Moving around the walls it not possible
+	if(gm->board[newPositionY][newPositionX] == B_WALL){
+
+        	;// ignore the move by doing nothing
+
+	// Any other move is permissible
+	}else{				
+
+		// If there is a collision between Mario and any of ghosts - STOP THE GAME - You have lost.
 		if( marioGhostsCollision((index_t){newPositionY, newPositionX},gm) ){
 				gm->gameStatus = SSTOP;
+		
+		// Otherwise, move the figure to the requested position
 		}else{
-		swap(&gm->board[gm->ghostIndex[gh_num].y][gm->ghostIndex[gh_num].x],&gm->board[newPositionY][newPositionX]);
-		gm->ghostIndex[gh_num].x = newPositionX;
-		gm->ghostIndex[gh_num].y = newPositionY;
+
+			// apply the move to the board
+			swap(&gm->board[gm->ghostIndex[num].y][gm->ghostIndex[num].x],&gm->board[newPositionY][newPositionX]);
+		
 		}	
+		// update figure's position in the main struct
+		gm->ghostIndex[num].x = newPositionX;
+		gm->ghostIndex[num].y = newPositionY;
 	}
-	
-	//zaktualizuj koordynaty figury 
 }
 
-index_t generateRandomPossibleMove(index_t *currentPositionOfFigure,int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
+index_t genRandSilly(const index_t *currPos,int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
 
 	// counter of permissible moves
 	int count_perm = 0;
 
-	index_t mv_arr[4] = {MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT};
+	index_t mv_arr[] = {MV_UP, MV_DOWN, MV_LEFT, MV_RIGHT};
 	
 	// setting up lists
 	// -- 'current_node' is used for traversing through the list	
@@ -233,7 +261,7 @@ index_t generateRandomPossibleMove(index_t *currentPositionOfFigure,int board[BS
 	// generate a list of all permissible moves for a given position
 	for(int i=0; i<sizeof mv_arr/sizeof(index_t); i++){
 		 
-		if(czyMozliwy(mv_arr[i], currentPositionOfFigure, board)){
+		if(isPossible(mv_arr[i], currPos, board)){
 			
 			++count_perm;
 			
@@ -313,7 +341,7 @@ index_t genRandFwd(index_t curr_pos, int graph[BSIZE_HEIGHT*BSIZE_WIDTH][BSIZE_H
 	return ret;
 }
 
-int czyMozliwy(index_t positionChangeRequest, index_t *currentPositionOfFigure, int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
+int isPossible(index_t positionChangeRequest, const index_t *currentPositionOfFigure, int board[BSIZE_HEIGHT][BSIZE_WIDTH]){
 	int newPositionX = (currentPositionOfFigure->x + positionChangeRequest.x);
 	int newPositionY = (currentPositionOfFigure->y + positionChangeRequest.y);
 	
