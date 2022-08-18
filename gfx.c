@@ -12,6 +12,7 @@ void gfx_initSDL(gfx_t *myGfx){
 
 	TTF_Init();
 
+	myGfx->basicFont = TTF_OpenFont("./fonts/8bitOperatorPlus-Regular.ttf",32);
 	myGfx->window = SDL_CreateWindow("C SDL2 Window",20, 20, WIN_W,WIN_H,SDL_WINDOW_SHOWN);
 	myGfx->renderer = NULL;
 	myGfx->renderer = SDL_CreateRenderer(myGfx->window,-1,SDL_RENDERER_ACCELERATED);
@@ -47,8 +48,8 @@ void gfx_intro(gfx_t *myGfx, game_t *myGame, int i){
 	char c[2];
 	SDL_Delay(100);
 	sprintf(c, "%d", i);
-	TTF_Font *font = TTF_OpenFont("./fonts/8bitOperatorPlus-Regular.ttf",72);
-	SDL_Surface* surfaceText = TTF_RenderText_Solid(font,c,(SDL_Color){255,255,255,0});
+
+	SDL_Surface* surfaceText = TTF_RenderText_Solid(myGfx->basicFont,c,(SDL_Color){255,255,255,0});
 		
 	SDL_Texture* textureText = SDL_CreateTextureFromSurface(myGfx->renderer,surfaceText);
 
@@ -69,7 +70,6 @@ void gfx_printScore(gfx_t *myGfx, game_t *myGame){
 	char txt[100];
     	int score = myGame->board[myGame->marioIndex.y][myGame->marioIndex.x]-MARIO_VALUE;
 	sprintf(txt, "Score: %3d", score);
-	myGfx->basicFont = TTF_OpenFont("./fonts/8bitOperatorPlus-Regular.ttf",20);
 	SDL_Surface* surfaceText = TTF_RenderText_Solid(myGfx->basicFont,txt,(SDL_Color){255,255,0,0});
 
     	SDL_Texture* textureText = SDL_CreateTextureFromSurface(myGfx->renderer,surfaceText);
@@ -91,8 +91,48 @@ void gfx_printScore(gfx_t *myGfx, game_t *myGame){
 	SDL_RenderFillRect(myGfx->renderer, &backdrop);
 
         SDL_RenderCopy(myGfx->renderer,textureText,NULL,&rectangle);
+	
 }
 
+
+void gfx_endOfGame(gfx_t *myGfx, game_t *myGame){
+	
+	char c[100];
+	const char *d = "Press <r> to restart";
+	int score = myGame->board[myGame->marioIndex.y][myGame->marioIndex.x]-MARIO_VALUE;
+	SDL_Delay(50);
+	sprintf(c, "Your score:%d", score);
+	SDL_Surface* surfaceText = TTF_RenderText_Solid(myGfx->basicFont,c,(SDL_Color){255,255,255,0});
+	SDL_Surface* surfaceTextRestart = TTF_RenderText_Solid(myGfx->basicFont,d,(SDL_Color){255,204,0});
+
+	SDL_Texture* textureText = SDL_CreateTextureFromSurface(myGfx->renderer,surfaceText);
+	SDL_Texture* textureTextRestart = SDL_CreateTextureFromSurface(myGfx->renderer,surfaceTextRestart);
+	
+	SDL_FreeSurface(surfaceText); 
+	SDL_FreeSurface(surfaceTextRestart); 
+
+	SDL_Rect rectangle, rectangle2,backdrop;
+	rectangle.x=20;
+	rectangle.y=WIN_H/2-120;
+	rectangle.w=500;
+	rectangle.h=180;
+
+	rectangle2.x=20;
+	rectangle2.y=WIN_H/2+60;
+	rectangle2.w = 300;
+	rectangle2.h = 60;
+
+	backdrop.x = 0;
+	backdrop.y = WIN_H/2-140;
+	backdrop.w = 560;
+	backdrop.h = 300;
+
+	SDL_SetRenderDrawColor(myGfx->renderer,0,0,0,100);
+	SDL_RenderFillRect(myGfx->renderer, &backdrop);
+	SDL_RenderCopy(myGfx->renderer,textureText,NULL,&rectangle);
+	SDL_RenderCopy(myGfx->renderer,textureTextRestart,NULL,&rectangle2);
+
+}
  
 void gfx_renderGhosts(game_t *myGame, gfx_t *myGfx){
 	
@@ -227,7 +267,9 @@ void gfx_cleanupSDL(gfx_t *myGfx){
 	SDL_DestroyTexture(myGfx->myImgs.img_mario);		
 	SDL_DestroyTexture(myGfx->myImgs.img_ghost);		
 	SDL_DestroyTexture(myGfx->myImgs.img_brick);		
-		
+
+	TTF_CloseFont(myGfx->basicFont);	
+	
 	IMG_Quit();
 	SDL_Quit();
 }

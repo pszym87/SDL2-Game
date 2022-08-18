@@ -57,10 +57,12 @@ int main(){
 			pthread_join(genMvTh, NULL);
 
 
+		// Stop the game and show the final score
 		}else if(myGame.gameStatus == SSTOP){	
-
-			processStopModeInput(&myGame);
-
+			processStopModeInput(&myGame);	
+			gfx_prepareScene(&myGame, &myGfx);
+			gfx_endOfGame(&myGfx, &myGame);
+			gfx_showScene(myGfx.renderer);
 		}
 
     	}

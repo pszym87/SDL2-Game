@@ -4,8 +4,8 @@
 #include "logic.h"
 
 #define GFX_FIELD_SIZE	30
-#define WIN_H	GFX_FIELD_SIZE*BSIZE_HEIGHT+SCORE_BAR_H
-#define WIN_W	GFX_FIELD_SIZE*BSIZE_WIDTH
+#define WIN_H	(GFX_FIELD_SIZE*BSIZE_HEIGHT+SCORE_BAR_H)
+#define WIN_W	(GFX_FIELD_SIZE*BSIZE_WIDTH)
 #define SCORE_BAR_H	30
 #define MARIO_VALUE	10
 
@@ -46,3 +46,5 @@ void gfx_printTheBoard(SDL_Renderer *renderer, SDL_Texture *image, int board[BSI
 
 void gfx_cleanupSDL(gfx_t *myGfx);
 
+
+void gfx_endOfGame(gfx_t *myGfx, game_t *myGame);
