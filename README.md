@@ -36,6 +36,12 @@ The picture below subsequently shows: visual representation, two-dimensional mat
 
 A slight modification of Dijkstra’s Algorithm was needed to find an **optimal move** for the third player. The original Dijkstra only holds information about the distance of the shortest path, not the nodes of the path itself. An *auxiliary array* was added to store predecessors for each node included in the shortest path in the graph.
 
+## Multi-threading
+
+![multi_threading](https://user-images.githubusercontent.com/106841261/185236032-dc900f60-fef5-4b86-a458-5c35a538a367.jpg)
+
+The game leverages from basic multi-threading, since the rendering and movement calculations could be performed concurrently. In the main loop, when user’s and computer’s moves are applied to the board, the program starts separate thread for performing graph algorithms, which are moderate in terms of time consumption (on Mac M1 machine it took ~4-7ms for moves generation), thus a slight improvement of the performance was achieved.
+
 ## Configuration and compilation
 
 The Game uses SDL2 graphical library. 
